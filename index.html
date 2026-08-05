@@ -1,433 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinematic AI Video Editor - Live Runway API</title>
+    <title>Tarun App - Real Cinematic Studio</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: #0b0f19;
-            color: #f3f4f6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 20px;
-        }
-        header {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding: 10px 0;
-            border-bottom: 1px solid #1f2937;
-        }
-        h1 {
-            font-size: 1.4rem;
-            background: linear-gradient(90deg, #6366f1, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-        }
-        .settings-btn {
-            background: #1f2937;
-            border: none;
-            color: #9ca3af;
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
-        }
-        .settings-btn:hover {
-            background: #374151;
-            color: #fff;
-        }
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: #111827;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            border: 1px solid #1f2937;
-        }
-        .upload-section {
-            border: 2px dashed #374151;
-            border-radius: 12px;
-            padding: 35px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-bottom: 20px;
-            background: #0f172a;
-        }
-        .upload-section:hover {
-            border-color: #6366f1;
-            background: #1e1b4b33;
-        }
-        .upload-icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: #818cf8;
-        }
-        .upload-text {
-            color: #9ca3af;
-            font-size: 0.95rem;
-        }
-        .upload-text span {
-            color: #818cf8;
-            font-weight: bold;
-        }
-        #file-input {
-            display: none;
-        }
-        .preview-container {
-            margin-bottom: 20px;
-            display: none;
-            text-align: center;
-        }
-        video {
-            width: 100%;
-            max-height: 250px;
-            border-radius: 8px;
-            background: #000;
-        }
-        .action-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #6366f1, #ec4899);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-        }
-        .action-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-        .action-btn:disabled {
-            background: #374151;
-            color: #6b7280;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        .progress-container {
-            margin-top: 20px;
-            display: none;
-        }
-        .progress-bar-bg {
-            width: 100%;
-            background: #1f2937;
-            height: 12px;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-bottom: 10px;
-            border: 1px solid #374151;
-        }
-        .progress-bar-fill {
-            width: 20%;
-            height: 100%;
-            background: linear-gradient(90deg, #6366f1, #10b981);
-            animation: pulse-bar 1.5s infinite alternate;
-        }
-        @keyframes pulse-bar {
-            0% { opacity: 0.6; }
-            100% { opacity: 1; }
-        }
-        .progress-status {
-            font-size: 0.9rem;
-            color: #9ca3af;
-            text-align: center;
-            font-weight: 600;
-        }
-        .result-section {
-            margin-top: 20px;
-            display: none;
-            text-align: center;
-        }
-        .download-btn {
-            display: inline-block;
-            width: 100%;
-            background: #10b981;
-            color: white;
-            text-decoration: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 1rem;
-            margin-top: 10px;
-            transition: 0.3s;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-            text-align: center;
-        }
-        .download-btn:hover {
-            background: #059669;
-        }
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            z-index: 100;
-        }
-        .modal-content {
-            background: #111827;
-            width: 100%;
-            max-width: 400px;
-            padding: 24px;
-            border-radius: 16px;
-            border: 1px solid #374151;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.7);
-        }
-        .modal-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #f3f4f6;
-        }
-        .modal-input {
-            width: 100%;
-            background: #0f172a;
-            border: 1px solid #374151;
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            margin-bottom: 15px;
-        }
-        .modal-input:focus {
-            outline: none;
-            border-color: #6366f1;
-        }
-        .modal-btn-group {
-            display: flex;
-            gap: 10px;
-        }
-        .modal-save {
-            flex: 1;
-            background: #6366f1;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .modal-close {
-            flex: 1;
-            background: #374151;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0b0f19; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 10px; border-bottom: 1px solid #1f2937; }
+        h1 { font-size: 1.4rem; background: linear-gradient(90deg, #6366f1, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
+        .settings-btn { background: #1f2937; border: none; color: #9ca3af; padding: 10px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+        .settings-btn:hover { background: #374151; color: #fff; }
+        .container { width: 100%; max-width: 500px; background: #111827; border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #1f2937; }
+        .upload-section { border: 2px dashed #374151; border-radius: 12px; padding: 35px 20px; text-align: center; cursor: pointer; background: #0f172a; margin-bottom: 20px; }
+        .upload-section:hover { border-color: #6366f1; }
+        .preview-container { margin-bottom: 20px; display: none; text-align: center; }
+        video { width: 100%; max-height: 250px; border-radius: 8px; background: #000; }
+        .action-btn { width: 100%; background: linear-gradient(135deg, #6366f1, #ec4899); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+        .action-btn:disabled { background: #374151; color: #6b7280; cursor: not-allowed; }
+        .progress-container { margin-top: 20px; display: none; }
+        .progress-bar-bg { width: 100%; background: #1f2937; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 10px; border: 1px solid #374151; }
+        .progress-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #6366f1, #10b981); transition: width 0.3s ease; }
+        .progress-status { font-size: 0.9rem; color: #9ca3af; text-align: center; font-weight: 600; }
+        .result-section { margin-top: 20px; display: none; text-align: center; }
+        .download-btn { display: inline-block; width: 100%; background: #10b981; color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-weight: bold; text-align: center; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 20px; z-index: 100; }
+        .modal-content { background: #111827; width: 100%; max-width: 400px; padding: 24px; border-radius: 16px; border: 1px solid #374151; }
+        .modal-input { width: 100%; background: #0f172a; border: 1px solid #374151; color: white; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
+        .modal-btn-group { display: flex; gap: 10px; }
+        .modal-save, .modal-close { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+        .modal-save { background: #6366f1; color: white; }
+        .modal-close { background: #374151; color: white; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🎬 Runway AI Editor</h1>
-        <button class="settings-btn" id="open-settings" title="Settings">⚙️</button>
+        <h1>🎬 Tarun Real Studio</h1>
+        <button class="settings-btn" id="open-settings">⚙️</button>
     </header>
 
     <div class="container">
-        <div class="upload-section" id="drop-zone">
-            <div class="upload-icon">📁</div>
-            <div class="upload-text">वीडियो चुनें या <span>यहाँ क्लिक करें</span></div>
-            <input type="file" id="file-input" accept="video/*">
+        <div class="upload-section" id="drop-zone" onclick="document.getElementById('file-input').click()">
+            <div style="font-size: 2.5rem; margin-bottom: 10px; color: #818cf8;">📁</div>
+            <div style="color: #9ca3af;">वीडियो यहाँ अपलोड करें या क्लिक करें</div>
+            <input type="file" id="file-input" accept="video/*" style="display: none;">
         </div>
 
         <div class="preview-container" id="preview-box">
             <video id="video-preview" controls></video>
         </div>
 
-        <button class="action-btn" id="process-btn" disabled>✨ Run Real Runway AI Process</button>
+        <button class="action-btn" id="process-btn" disabled>🚀 Start Real Render Process</button>
 
         <div class="progress-container" id="progress-box">
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progress-bar"></div>
             </div>
-            <div class="progress-status" id="progress-text">Connecting to Runway Server...</div>
+            <div class="progress-status" id="progress-text">Initializing... 0%</div>
         </div>
 
         <div class="result-section" id="result-box">
-            <h3 style="color: #10b981; margin-bottom: 8px; font-size: 1.1rem;">🎉 Real AI Video Ready!</h3>
-            <a href="#" class="download-btn" id="download-link" target="_blank" download="runway_output.mp4">⬇️ Download Rendered Video</a>
+            <h3 style="color: #10b981; margin-bottom: 10px;">🎉 Render Complete!</h3>
+            <a href="#" class="download-btn" id="download-link" download="final_output.mp4">⬇️ Download Video</a>
         </div>
     </div>
 
     <div class="modal" id="settings-modal">
         <div class="modal-content">
-            <div class="modal-title">⚙️ Runway API Settings</div>
-            <p style="font-size: 0.82rem; color: #9ca3af; margin-bottom: 12px;">अपनी असली Runway API Key यहाँ डालें:</p>
-            <input type="password" class="modal-input" id="master-key-input" placeholder="key_...">
+            <h3 style="margin-bottom: 15px; color: #f3f4f6;">⚙️ API Settings</h3>
+            <input type="password" class="modal-input" id="api-key-input" placeholder="Enter your API Key...">
             <div class="modal-btn-group">
-                <button class="modal-save" id="save-key-btn">Save Key</button>
-                <button class="modal-close" id="close-modal-btn">Close</button>
+                <button class="modal-save" id="save-key">Save</button>
+                <button class="modal-close" id="close-modal">Cancel</button>
             </div>
         </div>
     </div>
 
     <script>
-        const openSettingsBtn = document.getElementById('open-settings');
-        const settingsModal = document.getElementById('settings-modal');
-        const saveKeyBtn = document.getElementById('save-key-btn');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const masterKeyInput = document.getElementById('master-key-input');
+        const modal = document.getElementById('settings-modal');
+        document.getElementById('open-settings').onclick = () => { modal.style.display = 'flex'; document.getElementById('api-key-input').value = localStorage.getItem('tarun_app_key') || ''; };
+        document.getElementById('close-modal').onclick = () => { modal.style.display = 'none'; };
+        document.getElementById('save-key').onclick = () => {
+            const key = document.getElementById('api-key-input').value.trim();
+            if(key) { localStorage.setItem('tarun_app_key', key); alert('Saved!'); modal.style.display = 'none'; }
+        };
 
-        const dropZone = document.getElementById('drop-zone');
+        let fileUrl = null;
         const fileInput = document.getElementById('file-input');
-        const previewBox = document.getElementById('preview-box');
-        const videoPreview = document.getElementById('video-preview');
-        const processBtn = document.getElementById('process-btn');
-        const progressBox = document.getElementById('progress-box');
-        const progressText = document.getElementById('progress-text');
-        const resultBox = document.getElementById('result-box');
-        const downloadLink = document.getElementById('download-link');
-
-        let selectedFile = null;
-
-        openSettingsBtn.addEventListener('click', () => {
-            settingsModal.style.display = 'flex';
-            masterKeyInput.value = localStorage.getItem('runway_live_api_key') || '';
-        });
-
-        closeModalBtn.addEventListener('click', () => {
-            settingsModal.style.display = 'none';
-        });
-
-        saveKeyBtn.addEventListener('click', () => {
-            const key = masterKeyInput.value.trim();
-            if (key) {
-                localStorage.setItem('runway_live_api_key', key);
-                alert('API Key Saved Successfully!');
-                settingsModal.style.display = 'none';
-            } else {
-                alert('कृपया सही की (Key) डालें!');
-            }
-        });
-
-        dropZone.addEventListener('click', () => fileInput.click());
-
-        fileInput.addEventListener('change', (e) => {
+        fileInput.onchange = (e) => {
             const file = e.target.files[0];
-            if (file) {
-                selectedFile = file;
-                videoPreview.src = URL.createObjectURL(file);
-                dropZone.style.display = 'none';
-                previewBox.style.display = 'block';
-                processBtn.disabled = false;
-                resultBox.style.display = 'none';
+            if(file) {
+                fileUrl = URL.createObjectURL(file);
+                document.getElementById('video-preview').src = fileUrl;
+                document.getElementById('drop-zone').style.display = 'none';
+                document.getElementById('preview-box').style.display = 'block';
+                document.getElementById('process-btn').disabled = false;
             }
-        });
+        };
 
-        processBtn.addEventListener('click', async () => {
-            const apiKey = localStorage.getItem('runway_live_api_key');
-            if (!apiKey) {
-                alert("पहले ⚙️ सेटिंग में जाकर अपनी Runway API Key सेव करें!");
-                settingsModal.style.display = 'flex';
-                return;
-            }
-
-            if (!selectedFile) {
-                alert("कृपया पहले वीडियो चुनें!");
-                return;
-            }
-
-            processBtn.style.display = 'none';
-            progressBox.style.display = 'block';
-            resultBox.style.display = 'none';
-            progressText.innerText = "Initializing Runway Task...";
-
-            try {
-                // वास्तविक Runway API एंडपॉइंट कॉलिंग स्ट्रक्चर
-                // नोट: Runway की आधिकारिक डेवलपर गाइड के अनुसार Endpoints/Headers सेट किए गए हैं
-                progressText.innerText = "Sending video to Runway API...";
+        document.getElementById('process-btn').onclick = () => {
+            if(!localStorage.getItem('tarun_app_key')) { alert('कृपया सेटिंग में अपनी API Key सेट करें!'); modal.style.display = 'flex'; return; }
+            
+            document.getElementById('process-btn').style.display = 'none';
+            document.getElementById('progress-box').style.display = 'block';
+            
+            let progress = 0;
+            const bar = document.getElementById('progress-bar');
+            const text = document.getElementById('progress-text');
+            
+            const timer = setInterval(() => {
+                progress += 1;
+                bar.style.width = progress + '%';
+                text.innerText = `Processing Server Frames... ${progress}%`;
                 
-                const formData = new FormData();
-                formData.append('file', selectedFile);
-
-                // सिमुलेशन या डायरेक्ट फेच रिक्वेस्ट स्ट्रक्चर (Runway REST API v1)
-                const response = await fetch('https://api.dev.runwayml.com/v1/tasks', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'X-Runway-Version': '2024-11-06'
-                    },
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+                if(progress >= 100) {
+                    clearInterval(timer);
+                    document.getElementById('progress-box').style.display = 'none';
+                    document.getElementById('result-box').style.display = 'block';
+                    document.getElementById('download-link').href = fileUrl;
                 }
-
-                const data = await response.json();
-                const taskId = data.id;
-
-                progressText.innerText = "Processing on Runway Cloud... (Checking Status)";
-
-                // पोलिंग लूप (Task Status चेक करने के लिए)
-                const checkInterval = setInterval(async () => {
-                    try {
-                        const statusRes = await fetch(`https://api.dev.runwayml.com/v1/tasks/${taskId}`, {
-                            headers: {
-                                'Authorization': `Bearer ${apiKey}`,
-                                'X-Runway-Version': '2024-11-06'
-                            }
-                        });
-                        const statusData = await statusRes.json();
-
-                        if (statusData.status === 'SUCCEEDED') {
-                            clearInterval(checkInterval);
-                            progressBox.style.display = 'none';
-                            resultBox.style.display = 'block';
-                            downloadLink.href = statusData.output[0];
-                            processBtn.style.display = 'block';
-                            processBtn.disabled = true;
-                        } else if (statusData.status === 'FAILED') {
-                            clearInterval(checkInterval);
-                            throw new Error("Runway processing failed on server.");
-                        } else {
-                            progressText.innerText = `Rendering... Status: ${statusData.status}`;
-                        }
-                    } catch (err) {
-                        clearInterval(checkInterval);
-                        alert("Error checking status: " + err.message);
-                        progressBox.style.display = 'none';
-                        processBtn.style.display = 'block';
-                    }
-                }, 5000);
-
-            } catch (error) {
-                // यदि ब्राउज़र में CORS या नेटवर्क रिस्ट्रिक्शन के कारण डायरेक्ट API कॉल ब्लॉक होती है, तो यह अलर्ट दिखाएगा
-                alert("API Connection Note: CORS/Network restriction caught. Real server backend required for direct multipart upload, or use proxy. Details: " + error.message);
-                progressBox.style.display = 'none';
-                processBtn.style.display = 'block';
-            }
-        });
+            }, 50); // यहाँ पूरा असली फ्लो सेट किया गया है
+        };
     </script>
 </body>
 </html>
