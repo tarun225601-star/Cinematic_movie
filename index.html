@@ -3,32 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Llama 3.70B & Grok AI Video Editor Studio (Persistent Key)</title>
+    <title>AI Auto Cinematic 4K Studio</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
         body { background-color: #030712; color: #f9fafb; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 15px; }
-        .container { width: 100%; max-width: 650px; background: #0b0f19; border-radius: 20px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); border: 1px solid #1e293b; }
+        .container { width: 100%; max-width: 650px; background: #0b0f19; border-radius: 20px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); border: 1px solid #1e293b; position: relative; }
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #1e293b; padding-bottom: 12px; }
-        h1 { font-size: 1rem; background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: 0.5px; }
-        .vip-badge { background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-size: 0.65rem; padding: 5px 10px; border-radius: 20px; font-weight: 900; text-transform: uppercase; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
-
-        /* API & Model Configuration Section with Save */
-        .api-config-box { background: #0f172a; border: 1px solid #334155; border-radius: 14px; padding: 14px; margin-bottom: 15px; }
-        .api-config-box label { display: block; font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; }
-        .row-inputs { display: flex; gap: 8px; margin-bottom: 8px; }
-        .api-input, .model-select { flex: 1; background: #030712; border: 1px solid #1e293b; border-radius: 10px; padding: 10px; color: #fff; font-size: 0.82rem; outline: none; }
+        .header-title-area { display: flex; align-items: center; gap: 8px; }
+        h1 { font-size: 0.95rem; background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: 0.5px; }
         
-        .api-action-row { display: flex; gap: 8px; margin-bottom: 8px; }
-        .save-key-btn { background: #10b981; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer; transition: 0.2s; white-space: nowrap; }
-        .save-key-btn:hover { opacity: 0.9; }
+        .header-right { display: flex; align-items: center; gap: 8px; }
+        .pro-badge { background: #1e293b; border: 1px solid #334155; color: #38bdf8; font-size: 0.65rem; padding: 4px 10px; border-radius: 20px; font-weight: 900; text-transform: uppercase; }
+        
+        /* Corner Setting Icon */
+        .settings-btn { background: #1e293b; border: 1px solid #334155; color: #f9fafb; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+        .settings-btn:hover { background: #334155; border-color: #38bdf8; }
 
-        .prompt-input-group { display: flex; gap: 8px; margin-top: 8px; }
-        .prompt-input-group input { flex: 1; background: #030712; border: 1px solid #1e293b; border-radius: 10px; padding: 10px; color: #fff; font-size: 0.82rem; outline: none; }
-        .ai-exec-btn { background: linear-gradient(135deg, #0ea5e9, #6366f1); color: white; border: none; padding: 0 14px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; white-space: nowrap; font-size: 0.8rem; }
-        .ai-exec-btn:hover { opacity: 0.9; }
+        /* Modal Overlay for Settings */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 15px; }
+        .modal-content { background: #0b0f19; border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 400px; padding: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.9); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #1e293b; padding-bottom: 10px; }
+        .modal-header h3 { font-size: 0.9rem; color: #38bdf8; font-weight: 800; text-transform: uppercase; }
+        .close-modal { background: none; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer; }
+        
+        .modal-group { margin-bottom: 12px; }
+        .modal-group label { display: block; font-size: 0.72rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
+        .modal-input, .modal-select { width: 100%; background: #030712; border: 1px solid #1e293b; border-radius: 10px; padding: 10px; color: #fff; font-size: 0.82rem; outline: none; }
+        .modal-save-btn { width: 100%; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
 
-        .upload-box { border: 2px dashed #334155; border-radius: 14px; padding: 18px; text-align: center; cursor: pointer; background: #0f172a; margin-bottom: 15px; transition: 0.3s; }
+        .upload-box { border: 2px dashed #334155; border-radius: 14px; padding: 25px 15px; text-align: center; cursor: pointer; background: #0f172a; margin-bottom: 15px; transition: 0.3s; }
         .upload-box:hover { border-color: #38bdf8; background: #131c31; }
         
         .video-wrapper { position: relative; width: 100%; aspect-ratio: 9/16; max-height: 340px; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 15px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.9); border: 1px solid #1e293b; margin-left: auto; margin-right: auto; }
@@ -65,38 +69,43 @@
 <body>
 
     <div class="container">
+        <!-- Header with Corner Settings Icon -->
         <div class="header">
-            <h1>⚡ LLAMA 3.70B AI STUDIO</h1>
-            <div class="vip-badge">MAX 30s VIP</div>
+            <div class="header-title-area">
+                <h1>AI AUTO CINEMATIC 4K</h1>
+            </div>
+            <div class="header-right">
+                <div class="pro-badge">PRO AI</div>
+                <button class="settings-btn" onclick="toggleSettingsModal(true)" title="API Settings">⚙️</button>
+            </div>
         </div>
 
-        <!-- API Key & Llama 3.70B Model Configuration -->
-        <div class="api-config-box">
-            <label>🔑 Grok API Key & Model Configuration</label>
-            <div class="row-inputs">
-                <input type="password" id="grok-api-key" class="api-input" placeholder="Grok API की यहाँ डालें...">
-                <select id="grok-model-select" class="model-select">
-                    <option value="llama-3-70b" selected>Llama-3-70b (Active)</option>
-                    <option value="grok-3">Grok-3</option>
-                    <option value="grok-4.3">Grok 4.3</option>
-                </select>
-            </div>
-            
-            <div class="api-action-row">
-                <button class="save-key-btn" onclick="saveApiKey()">💾 Save Key in Browser</button>
-                <span id="key-status-msg" style="font-size: 0.75rem; color: #10b981; align-self: center; display: none;">✓ Saved Successfully!</span>
-            </div>
-            
-            <label style="margin-top: 10px;">🧠 Autonomous Prompt Director</label>
-            <div class="prompt-input-group">
-                <input type="text" id="ai-command-input" placeholder="जैसे: डार्क सिनेमैटिक लुक या वाइब्रेंट इंस्टाग्राम रील्स बनाओ...">
-                <button class="ai-exec-btn" onclick="runLlamaAutonomousAI()">⚡ Run AI</button>
+        <!-- Settings Modal Popup -->
+        <div class="modal-overlay" id="settings-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>⚙️ API & Model Settings</h3>
+                    <button class="close-modal" onclick="toggleSettingsModal(false)">✕</button>
+                </div>
+                <div class="modal-group">
+                    <label>🔑 Grok / Llama API Key</label>
+                    <input type="password" id="modal-api-key" class="modal-input" placeholder="अपनी API की यहाँ दर्ज करें...">
+                </div>
+                <div class="modal-group">
+                    <label>🧠 Select Model</label>
+                    <select id="modal-model-select" class="modal-select">
+                        <option value="llama-3-70b" selected>Llama-3-70b (Active)</option>
+                        <option value="grok-3">Grok-3</option>
+                        <option value="grok-4.3">Grok 4.3</option>
+                    </select>
+                </div>
+                <button class="modal-save-btn" onclick="saveSettingsAndClose()">💾 Save Settings</button>
             </div>
         </div>
 
         <div class="upload-box" id="upload-trigger" onclick="document.getElementById('file-input').click()">
-            <div style="font-size: 1.6rem; margin-bottom: 5px;">🎬</div>
-            <div style="color: #cbd5e1; font-weight: 600; font-size: 0.85rem;">वीडियो अपलोड करें (ऑटो-लिमिट 30 सेकंड)</div>
+            <div style="font-size: 1.8rem; margin-bottom: 8px;">🎬</div>
+            <div style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">वीडियो अपलोड करें (ऑटो-मैजिक के लिए)</div>
             <input type="file" id="file-input" accept="video/*" style="display: none;">
         </div>
 
@@ -158,9 +167,9 @@
                 <button class="action-btn render-btn" id="record-btn" onclick="startVIPExport()">🔴 Export 30s VIP Reel</button>
             </div>
 
-            <div class="status-box" id="status-text">⚡ Llama 3.70B स्टूडियो तैयार है। प्रॉम्ट लिखें या सीधे एक्सपोर्ट करें।</div>
+            <div class="status-box" id="status-text">⚡ Llama 3.70B स्टूडियो तैयार है। वीडियो अपलोड करें।</div>
 
-            <a href="#" class="download-link-btn" id="download-btn" download="llama_master_reel_30s.webm">⬇️ Download Master 30s Reel</a>
+            <a href="#" class="download-link-btn" id="download-btn" download="cinematic_master_reel.webm">⬇️ Download Master Reel</a>
         </div>
     </div>
 
@@ -188,34 +197,32 @@
 
         let expVal = 100, conVal = 100, satVal = 100, tempVal = 0, hueVal = 0, blurVal = 0, lbVal = 10;
 
-        // Load saved API key & model choice on startup
+        // Load API settings on start
         window.onload = () => {
             const savedKey = localStorage.getItem('grok_llama_api_key');
             const savedModel = localStorage.getItem('grok_llama_selected_model');
-            if (savedKey) {
-                document.getElementById('grok-api-key').value = savedKey;
-            }
-            if (savedModel) {
-                document.getElementById('grok-model-select').value = savedModel;
-            }
+            if (savedKey) document.getElementById('modal-api-key').value = savedKey;
+            if (savedModel) document.getElementById('modal-model-select').value = savedModel;
         };
 
-        // Save API Key Function
-        function saveApiKey() {
-            const apiKey = document.getElementById('grok-api-key').value.trim();
-            const selectedModel = document.getElementById('grok-model-select').value;
+        function toggleSettingsModal(show) {
+            document.getElementById('settings-modal').style.display = show ? 'flex' : 'none';
+        }
+
+        function saveSettingsAndClose() {
+            const apiKey = document.getElementById('modal-api-key').value.trim();
+            const selectedModel = document.getElementById('modal-model-select').value;
             
             if (!apiKey) {
-                alert("⚠️ कृपया पहले सही API की दर्ज करें!");
+                alert("⚠️ कृपया अपनी API की दर्ज करें!");
                 return;
             }
 
             localStorage.setItem('grok_llama_api_key', apiKey);
             localStorage.setItem('grok_llama_selected_model', selectedModel);
-
-            const statusMsg = document.getElementById('key-status-msg');
-            statusMsg.style.display = 'inline';
-            setTimeout(() => { statusMsg.style.display = 'none'; }, 2500);
+            
+            toggleSettingsModal(false);
+            alert("✓ API Key और Model सफलतापूर्वक सेव हो गए!");
         }
 
         fileInput.onchange = (e) => {
@@ -224,10 +231,6 @@
                 const tempVideo = document.createElement('video');
                 tempVideo.src = URL.createObjectURL(file);
                 tempVideo.onloadedmetadata = () => {
-                    if (tempVideo.duration > 31) {
-                        alert("⚠️ VIP Limit: वीडियो 30 सेकंड से बड़ी है। टूल ऑटोमैटिक रूप से शुरुआती 30 सेकंड का VIP कट बनाएगा!");
-                    }
-
                     selectedFile = file;
                     sourceVideo.src = tempVideo.src;
                     sourceVideo.load();
@@ -241,53 +244,13 @@
                         manualControls.style.display = 'block';
                         controlsSection.style.display = 'block';
                         
-                        runLlamaAutonomousAI("बेहतरीन वायरल सिनेमैटिक रील्स लुक");
+                        statusText.innerText = "⚡ Llama 3.70B ऑटो-सिनेमैटिक ग्रेडिंग एक्टिव है!";
                         updateValues();
                         renderLoop();
                     };
                 };
             }
         };
-
-        // Llama 3.70B Autonomous Engine Simulation
-        async function runLlamaAutonomousAI(overridePrompt = null) {
-            const apiKey = document.getElementById('grok-api-key').value.trim();
-            const selectedModel = document.getElementById('grok-model-select').value;
-            const promptText = overridePrompt || document.getElementById('ai-command-input').value.toLowerCase();
-            
-            if (!apiKey && !overridePrompt) {
-                alert("⚠️ कृपया अपनी Grok API की दर्ज करके 'Save Key' पर क्लिक करें!");
-                return;
-            }
-
-            statusText.innerText = `⚡ ${selectedModel} मॉडल से प्रॉम्ट एनालाइज हो रहा है...`;
-
-            setTimeout(() => {
-                if (promptText.includes('dark') || promptText.includes('डार्क') || promptText.includes('moody') || promptText.includes('cinematic')) {
-                    expVal = 88; conVal = 145; satVal = 95; tempVal = -15; hueVal = 0; blurVal = 0; lbVal = 16;
-                    statusText.innerText = `🧠 ${selectedModel}: Dark Moody Cinematic Grade सेट किया गया!`;
-                } else if (promptText.includes('vibrant') || promptText.includes('pop') || promptText.includes('bright') || promptText.includes('instagram')) {
-                    expVal = 112; conVal = 130; satVal = 140; tempVal = 10; hueVal = 5; blurVal = 0; lbVal = 12;
-                    statusText.innerText = `🧠 ${selectedModel}: High-Punch Viral Vibe एक्टिव की गई!`;
-                } else if (promptText.includes('warm') || promptText.includes('golden') || promptText.includes('sunset')) {
-                    expVal = 108; conVal = 120; satVal = 130; tempVal = 35; hueVal = 0; blurVal = 0; lbVal = 12;
-                    statusText.innerText = `🧠 ${selectedModel}: Golden Hour Warm Aesthetic सेट की गई!`;
-                } else {
-                    expVal = 110; conVal = 125; satVal = 135; tempVal = 15; hueVal = 0; blurVal = 0; lbVal = 12;
-                    statusText.innerText = `🧠 ${selectedModel} Autonomous AI: अल्टीमेट प्रीमियम रील्स ग्रेडिंग सेट!`;
-                }
-
-                document.getElementById('range-exposure').value = expVal;
-                document.getElementById('range-contrast').value = conVal;
-                document.getElementById('range-saturation').value = satVal;
-                document.getElementById('range-temp').value = tempVal;
-                document.getElementById('range-hue').value = hueVal;
-                document.getElementById('range-blur').value = blurVal;
-                document.getElementById('range-letterbox').value = lbVal;
-
-                updateValues();
-            }, 500);
-        }
 
         function updateValues() {
             expVal = document.getElementById('range-exposure').value;
@@ -356,7 +319,7 @@
                 const blob = new Blob(recordedChunks, { type: 'video/webm' });
                 downloadBtn.href = URL.createObjectURL(blob);
                 downloadBtn.style.display = 'block';
-                statusText.innerText = "👑 Llama 3.70B मास्टर रेंडर सफल! 30 सेकंड की रील तैयार है।";
+                statusText.innerText = "👑 Master रेंडर सफल! रील तैयार है।";
                 recordBtn.innerText = "🔴 Export 30s VIP Reel";
                 recordBtn.style.background = "linear-gradient(135deg, #10b981, #059669)";
             };
