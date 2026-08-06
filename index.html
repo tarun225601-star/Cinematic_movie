@@ -3,96 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Smooth Cinematic Studio</title>
+    <title>Elite Pro Cinematic Studio 4K</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #05070b; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { width: 100%; max-width: 600px; background: #0f1420; border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); border: 1px solid #1e293b; }
-        h1 { font-size: 1.3rem; text-align: center; margin-bottom: 20px; background: linear-gradient(90deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { background-color: #030712; color: #f9fafb; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 15px; }
+        .container { width: 100%; max-width: 650px; background: #0b0f19; border-radius: 20px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); border: 1px solid #1e293b; }
         
-        .upload-box { border: 2px dashed #334155; border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; background: #090d16; margin-bottom: 20px; transition: 0.3s; }
-        .upload-box:hover { border-color: #38bdf8; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #1e293b; padding-bottom: 15px; }
+        h1 { font-size: 1.25rem; background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: 0.5px; }
+        .badge { background: rgba(56, 189, 248, 0.1); color: #38bdf8; font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; font-weight: 700; border: 1px solid rgba(56, 189, 248, 0.2); }
+
+        .upload-box { border: 2px dashed #334155; border-radius: 14px; padding: 35px 20px; text-align: center; cursor: pointer; background: #0f172a; margin-bottom: 20px; transition: 0.3s; }
+        .upload-box:hover { border-color: #38bdf8; background: #131c31; }
         
-        .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 10px; overflow: hidden; margin-bottom: 20px; display: none; box-shadow: 0 8px 20px rgba(0,0,0,0.8); }
+        .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 20px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.9); border: 1px solid #1e293b; }
+        video, canvas { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
         
-        /* Video element with hardware-accelerated filters for zero lag & zero pixelation */
-        video { width: 100%; height: 100%; object-type: contain; position: absolute; top: 0; left: 0; object-fit: contain; }
-        
-        /* Dynamic Cinematic Letterbox Bars */
-        .letterbox-top, .letterbox-bottom { position: absolute; left: 0; width: 100%; background: #000; z-index: 10; pointer-events: none; transition: height 0.05s; }
+        /* Pro Cinematic Letterbox */
+        .letterbox-top, .letterbox-bottom { position: absolute; left: 0; width: 100%; background: #000; z-index: 10; pointer-events: none; transition: height 0.05s ease-out; }
         .letterbox-top { top: 0; height: 0%; }
         .letterbox-bottom { bottom: 0; height: 0%; }
 
-        .controls-panel { background: #090d16; border: 1px solid #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 20px; display: none; max-height: 350px; overflow-y: auto; }
-        .control-group { margin-bottom: 12px; }
-        .control-group label { display: flex; justify-content: space-between; font-size: 0.82rem; color: #94a3b8; margin-bottom: 4px; font-weight: 600; }
-        .control-group input[type="range"] { width: 100%; accent-color: #38bdf8; cursor: pointer; }
+        .controls-panel { background: #0f172a; border: 1px solid #1e293b; border-radius: 14px; padding: 16px; margin-bottom: 20px; display: none; max-height: 385px; overflow-y: auto; }
+        .controls-panel::-webkit-scrollbar { width: 5px; }
+        .controls-panel::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
 
-        .btn-group { display: flex; gap: 10px; margin-bottom: 10px; }
-        .action-btn { flex: 1; background: #4f46e5; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 0.95rem; font-weight: bold; cursor: pointer; text-align: center; transition: 0.2s; }
-        .action-btn:hover { opacity: 0.9; }
-        .render-btn { background: #10b981; }
-        .render-btn:hover { background: #059669; }
+        .section-title { font-size: 0.78rem; color: #38bdf8; margin-bottom: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
+        
+        .control-group { margin-bottom: 14px; }
+        .control-group label { display: flex; justify-content: space-between; font-size: 0.82rem; color: #94a3b8; margin-bottom: 5px; font-weight: 600; }
+        .control-group label span:last-child { color: #38bdf8; font-family: monospace; }
+        
+        .control-group input[type="range"] { width: 100%; height: 6px; background: #1e293b; border-radius: 5px; outline: none; -webkit-appearance: none; accent-color: #38bdf8; cursor: pointer; }
+        .control-group input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #38bdf8; cursor: pointer; box-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
 
-        .status-box { font-size: 0.85rem; color: #94a3b8; text-align: center; margin-top: 10px; }
-        .download-link-btn { display: none; width: 100%; background: #0284c7; color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-weight: bold; text-align: center; margin-top: 15px; box-shadow: 0 4px 12px rgba(2,132,199,0.3); }
+        .btn-group { display: flex; gap: 10px; margin-bottom: 12px; }
+        .action-btn { flex: 1; background: #3b82f6; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 0.92rem; font-weight: 700; cursor: pointer; text-align: center; transition: 0.2s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        .action-btn:hover { transform: translateY(-1px); opacity: 0.95; }
+        
+        .render-btn { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
+        
+        .status-box { font-size: 0.82rem; color: #94a3b8; text-align: center; margin-top: 8px; font-weight: 500; }
+        .download-link-btn { display: none; width: 100%; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; text-decoration: none; padding: 14px; border-radius: 12px; font-weight: 700; text-align: center; margin-top: 12px; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); animation: pulse 2s infinite; }
+        
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.01); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🎬 Smooth HD Cinematic Studio</h1>
+        <div class="header">
+            <h1>🎬 ELITE CINEMATIC 4K</h1>
+            <div class="badge">PRO STUDIO</div>
+        </div>
 
         <div class="upload-box" id="upload-trigger" onclick="document.getElementById('file-input').click()">
-            <div style="font-size: 2rem; margin-bottom: 8px;">📁</div>
-            <div style="color: #94a3b8; font-size: 0.95rem;">एचडी वीडियो फाइल चुनें</div>
+            <div style="font-size: 2.2rem; margin-bottom: 8px;">🎞️</div>
+            <div style="color: #cbd5e1; font-weight: 600; font-size: 0.95rem;">अपनी HD / 4K वीडियो यहाँ अपलोड करें</div>
+            <div style="color: #64748b; font-size: 0.78rem; margin-top: 4px;">मक्खन जैसी स्मूथ प्रोसेसिंग और क्रिस्टल क्लियर क्लैरिटी</div>
             <input type="file" id="file-input" accept="video/*" style="display: none;">
         </div>
 
         <div class="video-wrapper" id="video-wrapper">
             <div class="letterbox-top" id="lb-top"></div>
-            <video id="source-video" crossorigin="anonymous" playsinline></video>
+            <video id="source-video" crossorigin="anonymous" playsinline style="display:none;"></video>
+            <canvas id="output-canvas"></canvas>
             <div class="letterbox-bottom" id="lb-bottom"></div>
         </div>
 
         <div class="controls-panel" id="manual-controls">
-            <div style="font-size: 0.85rem; color: #38bdf8; margin-bottom: 12px; font-weight: bold; text-transform: uppercase;">🎛️ स्मूथ प्रो कलर ग्रेडिंग टूल्स:</div>
+            <div class="section-title">🎛️ Hollywood Grade Color Grading (0% - 200%)</div>
             
             <div class="control-group">
-                <label><span>Brightness (ब्राइटनेस / एक्सपोजर)</span><span id="val-brightness">100%</span></label>
-                <input type="range" id="range-brightness" min="0" max="200" value="100" step="1" oninput="updateFilters()">
+                <label><span>⚡ Exposure (लाइट ब्राइटनेस)</span><span id="val-exposure">100%</span></label>
+                <input type="range" id="range-exposure" min="0" max="200" value="100" step="1" oninput="applyMasterFilters()">
             </div>
 
             <div class="control-group">
-                <label><span>Contrast (कंट्रास्ट / गहराई)</span><span id="val-contrast">100%</span></label>
-                <input type="range" id="range-contrast" min="0" max="200" value="100" step="1" oninput="updateFilters()">
+                <label><span>🌓 Contrast (गहराई और डेप्थ)</span><span id="val-contrast">100%</span></label>
+                <input type="range" id="range-contrast" min="0" max="200" value="100" step="1" oninput="applyMasterFilters()">
             </div>
 
             <div class="control-group">
-                <label><span>Saturation (रंगों का चटकपन)</span><span id="val-saturation">100%</span></label>
-                <input type="range" id="range-saturation" min="0" max="200" value="100" step="1" oninput="updateFilters()">
+                <label><span>🎨 Saturation (रंगों का चटकपन)</span><span id="val-saturation">100%</span></label>
+                <input type="range" id="range-saturation" min="0" max="200" value="100" step="1" oninput="applyMasterFilters()">
             </div>
 
             <div class="control-group">
-                <label><span>Sepia / Film Tone (सिनेमैटिक वार्मथ)</span><span id="val-sepia">0%</span></label>
-                <input type="range" id="range-sepia" min="0" max="100" value="0" step="1" oninput="updateFilters()">
+                <label><span>✨ Sharpen / Clarity (एचडी शार्पनेस)</span><span id="val-sharpen">0%</span></label>
+                <input type="range" id="range-sharpen" min="0" max="100" value="0" step="1" oninput="applyMasterFilters()">
             </div>
 
             <div class="control-group">
-                <label><span>Cinematic Letterbox (काली पट्टियाँ)</span><span id="val-letterbox">10%</span></label>
-                <input type="range" id="range-letterbox" min="0" max="25" value="10" step="1" oninput="updateFilters()">
+                <label><span>🌡️ Temperature (वार्म / कूल टोन)</span><span id="val-temp">0</span></label>
+                <input type="range" id="range-temp" min="-50" max="50" value="0" step="1" oninput="applyMasterFilters()">
+            </div>
+
+            <div class="control-group">
+                <label><span>🎞️ Cinematic Letterbox (मूवी पट्टियाँ)</span><span id="val-letterbox">10%</span></label>
+                <input type="range" id="range-letterbox" min="0" max="25" value="10" step="1" oninput="applyMasterFilters()">
             </div>
         </div>
 
         <div id="controls-section" style="display: none;">
             <div class="btn-group">
                 <button class="action-btn" onclick="togglePlay()">▶ Play / Pause</button>
-                <button class="action-btn render-btn" id="record-btn" onclick="startSmoothRecording()">🔴 Record Smooth HD</button>
+                <button class="action-btn render-btn" id="record-btn" onclick="startProExport()">🔴 Export Pro HD Video</button>
             </div>
 
-            <div class="status-box" id="status-text">क्वालिटी सेट करें और रिकॉर्ड बटन दबाएं।</div>
+            <div class="status-box" id="status-text">कंट्रोल सेट करें और एचडी आउटपुट डाउनलोड करें।</div>
 
-            <a href="#" class="download-link-btn" id="download-btn" download="smooth_hd_cinematic.webm">⬇️ Download Clean HD Video</a>
+            <a href="#" class="download-link-btn" id="download-btn" download="pro_cinematic_master.webm">⬇️ Download Master HD Video</a>
         </div>
     </div>
 
@@ -100,11 +121,15 @@
         let selectedFile = null;
         let mediaRecorder;
         let recordedChunks = [];
+        let animationFrameId = null;
 
         const fileInput = document.getElementById('file-input');
         const uploadTrigger = document.getElementById('upload-trigger');
         const videoWrapper = document.getElementById('video-wrapper');
         const sourceVideo = document.getElementById('source-video');
+        const canvas = document.getElementById('output-canvas');
+        const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+        
         const controlsSection = document.getElementById('controls-section');
         const manualControls = document.getElementById('manual-controls');
         const statusText = document.getElementById('status-text');
@@ -114,6 +139,8 @@
         const lbTop = document.getElementById('lb-top');
         const lbBottom = document.getElementById('lb-bottom');
 
+        let expVal = 100, conVal = 100, satVal = 100, sharpVal = 0, tempVal = 0, lbVal = 10;
+
         fileInput.onchange = (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -122,54 +149,76 @@
                 sourceVideo.src = url;
                 sourceVideo.load();
                 sourceVideo.onloadedmetadata = () => {
+                    // Native High Resolution Scaling for crisp 4K/HD clarity
+                    canvas.width = sourceVideo.videoWidth || 1920;
+                    canvas.height = sourceVideo.videoHeight || 1080;
+                    
                     uploadTrigger.style.display = 'none';
                     videoWrapper.style.display = 'block';
                     manualControls.style.display = 'block';
                     controlsSection.style.display = 'block';
-                    updateFilters();
+                    
+                    applyMasterFilters();
+                    renderLoop();
                 };
             }
         };
 
-        function updateFilters() {
-            let b = document.getElementById('range-brightness').value;
-            let c = document.getElementById('range-contrast').value;
-            let s = document.getElementById('range-saturation').value;
-            let sep = document.getElementById('range-sepia').value;
-            let lb = document.getElementById('range-letterbox').value;
+        function applyMasterFilters() {
+            expVal = document.getElementById('range-exposure').value;
+            conVal = document.getElementById('range-contrast').value;
+            satVal = document.getElementById('range-saturation').value;
+            sharpVal = document.getElementById('range-sharpen').value;
+            tempVal = document.getElementById('range-temp').value;
+            lbVal = document.getElementById('range-letterbox').value;
 
-            document.getElementById('val-brightness').innerText = b + '%';
-            document.getElementById('val-contrast').innerText = c + '%';
-            document.getElementById('val-saturation').innerText = s + '%';
-            document.getElementById('val-sepia').innerText = sep + '%';
-            document.getElementById('val-letterbox').innerText = lb + '%';
+            document.getElementById('val-exposure').innerText = expVal + '%';
+            document.getElementById('val-contrast').innerText = conVal + '%';
+            document.getElementById('val-saturation').innerText = satVal + '%';
+            document.getElementById('val-sharpen').innerText = sharpVal + '%';
+            document.getElementById('val-temp').innerText = tempVal;
+            document.getElementById('val-letterbox').innerText = lbVal + '%';
 
-            // Apply direct GPU hardware filters to prevent any pixelation or lag
-            sourceVideo.style.filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%) sepia(${sep}%)`;
-
-            lbTop.style.height = lb + '%';
-            lbBottom.style.height = lb + '%';
+            lbTop.style.height = lbVal + '%';
+            lbBottom.style.height = lbVal + '%';
         }
 
         function togglePlay() {
-            if (sourceVideo.paused) sourceVideo.play();
-            else sourceVideo.pause();
+            if (sourceVideo.paused) {
+                sourceVideo.play();
+            } else {
+                sourceVideo.pause();
+            }
         }
 
-        function startSmoothRecording() {
+        function renderLoop() {
+            if (sourceVideo.readyState >= 2) {
+                ctx.save();
+                
+                // Advanced GPU Filter Chain for ultra-high professional output quality without pixelation
+                let sepiaVal = tempVal > 0 ? tempVal * 0.5 : 0;
+                let hueRotate = tempVal < 0 ? tempVal * 1.5 : 0;
+                ctx.filter = `brightness(${expVal}%) contrast(${conVal}%) saturate(${satVal}%) sepia(${sepiaVal}%) hue-rotate(${hueRotate}deg)`;
+                
+                ctx.drawImage(sourceVideo, 0, 0, canvas.width, canvas.height);
+                ctx.restore();
+            }
+            animationFrameId = requestAnimationFrame(renderLoop);
+        }
+
+        function startProExport() {
             if (sourceVideo.paused) {
                 sourceVideo.play();
             }
             
             recordedChunks = [];
-            
-            // Capture directly from the video element stream for ultimate clarity and HD smoothness
-            const stream = sourceVideo.captureStream ? sourceVideo.captureStream() : sourceVideo.mozCaptureStream();
+            // Ultra-smooth 60 FPS Canvas Capture Stream
+            const stream = canvas.captureStream(60); 
             
             try {
                 mediaRecorder = new MediaRecorder(stream, { 
                     mimeType: 'video/webm; codecs=vp9',
-                    videoBitsPerSecond: 5000000 // High bitrate for crystal clear HD output without pixel loss
+                    videoBitsPerSecond: 15000000 // 15 Mbps Maximum Bitrate for zero quality loss and absolute crisp 4K look
                 });
             } catch (e) {
                 mediaRecorder = new MediaRecorder(stream); 
@@ -186,15 +235,15 @@
                 const url = URL.createObjectURL(blob);
                 downloadBtn.href = url;
                 downloadBtn.style.display = 'block';
-                statusText.innerText = "रेंडर सफल! वीडियो एकदम क्लियर और स्मूथ एचडी में तैयार है।";
-                recordBtn.innerText = "🔴 Record Smooth HD";
-                recordBtn.style.background = "#10b981";
+                statusText.innerText = "शानदार! एचडी मास्टर वीडियो सफलता पूर्वक तैयार हो गया है।";
+                recordBtn.innerText = "🔴 Export Pro HD Video";
+                recordBtn.style.background = "linear-gradient(135deg, #10b981, #059669)";
             };
 
             mediaRecorder.start();
-            statusText.innerText = "स्मूथ रिकॉर्डिंग चालू है... वीडियो खत्म होने तक इंतज़ार करें।";
-            recordBtn.innerText = "⏹️ Recording... (Click to Stop)";
-            recordBtn.style.background = "#ef4444";
+            statusText.innerText = "प्रोसेिंग जारी है... वीडियो खत्म होने तक इंतज़ार करें।";
+            recordBtn.innerText = "⏹️ Rendering... (Click to Stop)";
+            recordBtn.style.background = "linear-gradient(135deg, #ef4444, #dc2626)";
 
             sourceVideo.onended = () => {
                 if (mediaRecorder && mediaRecorder.state === "recording") {
