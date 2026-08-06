@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HD Cinematic Studio Pro</title>
+    <title>HD Cinematic Studio Pro - Debug Mode</title>
     <!-- FFmpeg WASM CDN -->
     <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
     <style>
@@ -37,7 +37,7 @@
         .progress-box { margin-top: 15px; display: none; text-align: center; }
         .progress-bar-bg { width: 100%; background: #1e293b; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 8px; }
         .progress-fill { width: 0%; height: 100%; background: #38bdf8; transition: width 0.2s; }
-        .progress-text { font-size: 0.85rem; color: #94a3b8; }
+        .progress-text { font-size: 0.85rem; color: #94a3b8; word-break: break-all; }
         
         .download-link-btn { display: none; width: 100%; background: #0284c7; color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-weight: bold; text-align: center; margin-top: 15px; box-shadow: 0 4px 12px rgba(2,132,199,0.3); }
     </style>
@@ -45,11 +45,11 @@
 <body>
 
     <div class="container">
-        <h1>🎬 HD Cinematic Studio Pro</h1>
+        <h1>🎬 HD Studio (Debug Mode)</h1>
 
         <div class="upload-box" id="upload-trigger" onclick="document.getElementById('file-input').click()">
             <div style="font-size: 2rem; margin-bottom: 8px;">📁</div>
-            <div style="color: #94a3b8; font-size: 0.95rem;">HD रेंडरिंग के लिए वीडियो चुनें</div>
+            <div style="color: #94a3b8; font-size: 0.95rem;">वीडियो चुनें (एरर ट्रैकर के साथ)</div>
             <input type="file" id="file-input" accept="video/*" style="display: none;">
         </div>
 
@@ -61,7 +61,7 @@
         </div>
 
         <div id="controls-section" style="display: none;">
-            <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 8px; font-weight: bold; text-transform: uppercase;">HD मूवी लुक चुनें:</div>
+            <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 8px; font-weight: bold; text-transform: uppercase;">मूवी लुक चुनें:</div>
             <div class="filters-grid">
                 <button class="filter-btn active" onclick="setFilter('hollywood', this)">🎥 Hollywood HD</button>
                 <button class="filter-btn" onclick="setFilter('cyberpunk', this)">⚡ Cyberpunk Neon</button>
@@ -74,11 +74,11 @@
                 <button class="action-btn render-btn" onclick="startHDRender()">✨ Export HD Render</button>
             </div>
 
-            <div class="progress-box" id="progress-box">
+            <div class="progress-box" id="progress-box" style="display: block;">
                 <div class="progress-bar-bg">
                     <div class="progress-fill" id="progress-fill"></div>
                 </div>
-                <div class="progress-text" id="progress-text">Processing HD Frames... 0%</div>
+                <div class="progress-text" id="progress-text">तैयार है। 'Export HD Render' दबाएं।</div>
             </div>
 
             <a href="#" class="download-link-btn" id="download-btn" download="cinematic_hd_output.mp4">⬇️ Download HD Rendered Video</a>
@@ -86,7 +86,6 @@
     </div>
 
     <script>
-        const { FFmpeg } = FFmpegWASM;
         let ffmpeg = null;
         let selectedFile = null;
         let currentFilter = 'hollywood';
@@ -163,50 +162,80 @@
         }
 
         async function startHDRender() {
-            if (!selectedFile) return;
+            if (!selectedFile) {
+                alert("कृपया पहले वीडियो चुनें!");
+                return;
+            }
+            
             progressBox.style.display = 'block';
             downloadBtn.style.display = 'none';
-            progressText.innerText = "Loading HD Engine...";
+            progressFill.style.width = '10%';
+            progressText.innerText = "Checking FFmpeg library...";
 
-            if (!ffmpeg) {
-                ffmpeg = new FFmpeg();
-                ffmpeg.on("progress", ({ progress }) => {
-                    let percent = Math.round(progress * 100);
-                    if(percent > 100) percent = 100;
-                    progressFill.style.width = percent + '%';
-                    progressText.innerText = `Rendering HD Video... ${percent}%`;
-                });
-                await ffmpeg.load();
+            try {
+                if (typeof FFmpegWASM === 'undefined') {
+                    throw new Error("FFmpeg script failed to load from CDN (Check Internet/CORS).");
+                }
+
+                const { FFmpeg } = FFmpegWASM;
+
+                if (!ffmpeg) {
+                    progressText.innerText = "Loading FFmpeg Engine from CDN (approx 25MB)...";
+                    ffmpeg = new FFmpeg();
+                    
+                    ffmpeg.on("log", ({ message }) => {
+                        console.log("FFmpeg Log:", message);
+                    });
+
+                    ffmpeg.on("progress", ({ progress }) => {
+                        let percent = Math.round(progress * 100);
+                        if(percent > 100) percent = 100;
+                        progressFill.style.width = percent + '%';
+                        progressText.innerText = `Rendering Video... ${percent}%`;
+                    });
+
+                    await ffmpeg.load();
+                }
+
+                progressFill.style.width = '40%';
+                progressText.innerText = "Reading video file into memory...";
+                const data = await selectedFile.arrayBuffer();
+                await ffmpeg.writeFile("input.mp4", new Uint8Array(data));
+
+                progressFill.style.width = '60%';
+                progressText.innerText = "Applying Cinematic Filters & Encoding...";
+                
+                let vfString = "scale=1280:720";
+                if (currentFilter === 'hollywood') {
+                    vfString += ",colorbalance=rs=0.1:gs=-0.05:bs=-0.1,crop=iw:ih*0.88";
+                } else if (currentFilter === 'cyberpunk') {
+                    vfString += ",eq=contrast=1.3:saturation=1.4,crop=iw:ih*0.88";
+                } else if (currentFilter === 'vintage') {
+                    vfString += ",eq=saturation=0.5:brightness=-0.05,crop=iw:ih*0.88";
+                } else if (currentFilter === 'matrix') {
+                    vfString += ",colorbalance=gm=0.2:gs=0.2,crop=iw:ih*0.88";
+                }
+
+                await ffmpeg.exec(["-i", "input.mp4", "-vf", vfString, "-c:v", "libx264", "-preset", "ultrafast", "output.mp4"]);
+
+                progressFill.style.width = '90%';
+                progressText.innerText = "Preparing download file...";
+                const outputData = await ffmpeg.readFile("output.mp4");
+                const blob = new Blob([outputData.buffer], { type: "video/mp4" });
+                const outputUrl = URL.createObjectURL(blob);
+
+                progressFill.style.width = '100%';
+                progressText.innerText = "Render Complete!";
+                downloadBtn.href = outputUrl;
+                downloadBtn.style.display = 'block';
+                alert('HD वीडियो सफलतापूर्वक रेंडर हो गई है!');
+
+            } catch (err) {
+                console.error("Detailed Error:", err);
+                progressFill.style.width = '100%';
+                progressFill.style.background = '#ef4444'; // Red bar on error
+                progressText.innerHTML = `<span style="color: #ef4444; font-weight: bold;">Error Found:</span> ${err.message || err}`;
             }
-
-            progressText.innerText = "Preparing video data...";
-            const data = await selectedFile.arrayBuffer();
-            await ffmpeg.writeFile("input.mp4", new Uint8Array(data));
-
-            progressText.innerText = "Applying HD Cinematic Filters & Letterbox...";
-            
-            let vfString = "scale=1280:720";
-            if (currentFilter === 'hollywood') {
-                vfString += ",colorbalance=rs=0.1:gs=-0.05:bs=-0.1,crop=iw:ih*0.88";
-            } else if (currentFilter === 'cyberpunk') {
-                vfString += ",eq=contrast=1.3:saturation=1.4,crop=iw:ih*0.88";
-            } else if (currentFilter === 'vintage') {
-                vfString += ",eq=saturation=0.5:brightness=-0.05,crop=iw:ih*0.88";
-            } else if (currentFilter === 'matrix') {
-                vfString += ",colorbalance=gm=0.2:gs=0.2,crop=iw:ih*0.88";
-            }
-
-            await ffmpeg.exec(["-i", "input.mp4", "-vf", vfString, "-c:v", "libx264", "-preset", "ultrafast", "output.mp4"]);
-
-            progressText.innerText = "Finalizing HD Render...";
-            const outputData = await ffmpeg.readFile("output.mp4");
-            const blob = new Blob([outputData.buffer], { type: "video/mp4" });
-            const outputUrl = URL.createObjectURL(blob);
-
-            progressBox.style.display = 'none';
-            downloadBtn.href = outputUrl;
-            downloadBtn.style.display = 'block';
-            alert('HD वीडियो सफलतापूर्वक रेंडर हो गई है! नीचे दिए गए बटन से डाउनलोड कर लें।');
         }
     </script>
 </body>
