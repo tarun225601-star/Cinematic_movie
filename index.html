@@ -3,178 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Auto Cinematic 4K Studio</title>
+    <title>Viziag Global - Autonomous AI Cinematic Studio</title>
     <style>
+        :root {
+            --bg-base: #030712;
+            --bg-card: #0b0f19;
+            --bg-card-hover: #0f172a;
+            --border-color: #1e293b;
+            --border-hover: #38bdf8;
+            --text-main: #f9fafb;
+            --text-muted: #94a3b8;
+            --accent-primary: #38bdf8;
+            --accent-success: #10b981;
+            --accent-danger: #ef4444;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-        body { background-color: #030712; color: #f9fafb; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 15px; }
-        .container { width: 100%; max-width: 650px; background: #0b0f19; border-radius: 20px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); border: 1px solid #1e293b; position: relative; }
+        body { background-color: var(--bg-base); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #1e293b; padding-bottom: 12px; }
-        .header-title-area { display: flex; align-items: center; gap: 8px; }
-        h1 { font-size: 0.95rem; background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: 0.5px; }
+        .container { width: 100%; max-width: 680px; background: var(--bg-card); border-radius: 24px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9); border: 1px solid var(--border-color); position: relative; backdrop-filter: blur(10px); }
         
-        .header-right { display: flex; align-items: center; gap: 8px; }
-        .pro-badge { background: #1e293b; border: 1px solid #334155; color: #38bdf8; font-size: 0.65rem; padding: 4px 10px; border-radius: 20px; font-weight: 900; text-transform: uppercase; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .header-title-area { display: flex; align-items: center; gap: 10px; }
+        .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #38bdf8, #6366f1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3); }
+        h1 { font-size: 1rem; background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: 0.5px; }
         
-        /* Corner Setting Icon */
-        .settings-btn { background: #1e293b; border: 1px solid #334155; color: #f9fafb; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; transition: 0.2s; }
-        .settings-btn:hover { background: #334155; border-color: #38bdf8; }
+        .header-right { display: flex; align-items: center; gap: 10px; }
+        .pro-badge { background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); color: var(--accent-primary); font-size: 0.65rem; padding: 5px 12px; border-radius: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .settings-btn { background: var(--border-color); border: 1px solid var(--border-color); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; transition: all 0.3s ease; }
+        .settings-btn:hover { background: var(--bg-card-hover); border-color: var(--accent-primary); transform: rotate(45deg); }
 
-        /* Modal Overlay for Settings */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 15px; }
-        .modal-content { background: #0b0f19; border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 400px; padding: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.9); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #1e293b; padding-bottom: 10px; }
-        .modal-header h3 { font-size: 0.9rem; color: #38bdf8; font-weight: 800; text-transform: uppercase; }
-        .close-modal { background: none; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer; }
+        /* Professional Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+        .modal-content { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; width: 100%; max-width: 420px; padding: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.9); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
+        .modal-header h3 { font-size: 0.95rem; color: var(--accent-primary); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .close-modal { background: none; border: none; color: var(--text-muted); font-size: 1.3rem; cursor: pointer; }
         
-        .modal-group { margin-bottom: 12px; }
-        .modal-group label { display: block; font-size: 0.72rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
-        .modal-input, .modal-select { width: 100%; background: #030712; border: 1px solid #1e293b; border-radius: 10px; padding: 10px; color: #fff; font-size: 0.82rem; outline: none; }
-        .modal-save-btn { width: 100%; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
+        .modal-group { margin-bottom: 15px; }
+        .modal-group label { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+        .modal-input, .modal-select { width: 100%; background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 0.85rem; outline: none; }
+        .modal-save-btn { width: 100%; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 10px; }
 
-        .upload-box { border: 2px dashed #334155; border-radius: 14px; padding: 25px 15px; text-align: center; cursor: pointer; background: #0f172a; margin-bottom: 15px; transition: 0.3s; }
-        .upload-box:hover { border-color: #38bdf8; background: #131c31; }
+        /* Autonomous Prompt Section */
+        .prompt-card { background: var(--bg-card-hover); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 20px; }
+        .prompt-label { font-size: 0.72rem; color: var(--accent-primary); font-weight: 800; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .prompt-input-group { display: flex; gap: 8px; }
+        .prompt-input { flex: 1; background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 0.85rem; outline: none; }
+        .run-prompt-btn { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; padding: 0 18px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.85rem; transition: opacity 0.2s; }
+        .run-prompt-btn:hover { opacity: 0.9; }
+
+        /* Upload Area */
+        .upload-box { border: 2px dashed var(--border-color); border-radius: 16px; padding: 25px 20px; text-align: center; cursor: pointer; background: var(--bg-card-hover); margin-bottom: 20px; transition: all 0.3s ease; }
+        .upload-box:hover { border-color: var(--accent-primary); background: #131c31; }
         
-        .video-wrapper { position: relative; width: 100%; aspect-ratio: 9/16; max-height: 340px; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 15px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.9); border: 1px solid #1e293b; margin-left: auto; margin-right: auto; }
+        .video-wrapper { position: relative; width: 100%; aspect-ratio: 9/16; max-height: 280px; background: #000; border-radius: 16px; overflow: hidden; margin-bottom: 20px; display: none; border: 1px solid var(--border-color); margin-left: auto; margin-right: auto; }
         video, canvas { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
         
-        .letterbox-top, .letterbox-bottom { position: absolute; left: 0; width: 100%; background: #000; z-index: 10; pointer-events: none; transition: height 0.2s ease-out; }
-        .letterbox-top { top: 0; height: 0%; }
-        .letterbox-bottom { bottom: 0; height: 0%; }
+        .letterbox-top, .letterbox-bottom { position: absolute; left: 0; width: 100%; background: #000; z-index: 10; pointer-events: none; }
+        .letterbox-top { top: 0; height: 10%; }
+        .letterbox-bottom { bottom: 0; height: 10%; }
 
-        /* All Tools Panel */
-        .controls-panel { background: #0f172a; border: 1px solid #1e293b; border-radius: 14px; padding: 14px; margin-bottom: 15px; display: none; max-height: 280px; overflow-y: auto; }
-        .controls-panel::-webkit-scrollbar { width: 5px; }
-        .controls-panel::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        /* Autonomous Live Logs Console */
+        .logs-section { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 16px; padding: 15px; margin-bottom: 20px; display: none; }
+        .logs-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+        .logs-title { font-size: 0.72rem; color: var(--accent-primary); font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+        
+        .logs-container { max-height: 130px; overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.75rem; color: #cbd5e1; }
+        .logs-container::-webkit-scrollbar { width: 4px; }
+        .logs-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+        .log-line { margin-bottom: 5px; line-height: 1.4; border-left: 2px solid var(--accent-primary); padding-left: 8px; }
+        .log-error { border-left-color: var(--accent-danger) !important; color: #f87171 !important; font-weight: bold; }
+        .log-success { border-left-color: var(--accent-success) !important; color: #34d399 !important; font-weight: bold; }
 
-        .section-title { font-size: 0.72rem; color: #38bdf8; margin-bottom: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        /* Prominent Download Button (100% Completion style) */
+        .download-link-btn { display: none; width: 100%; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; text-decoration: none; padding: 16px; border-radius: 12px; font-weight: 800; text-align: center; font-size: 0.95rem; box-shadow: 0 8px 25px rgba(2, 132, 199, 0.5); margin-top: 10px; animation: pulseGlow 2s infinite; }
         
-        .control-group { margin-bottom: 12px; }
-        .control-group label { display: flex; justify-content: space-between; font-size: 0.78rem; color: #94a3b8; margin-bottom: 4px; font-weight: 600; }
-        .control-group label span:last-child { color: #38bdf8; font-family: monospace; }
-        
-        .control-group input[type="range"] { width: 100%; height: 5px; background: #1e293b; border-radius: 5px; outline: none; -webkit-appearance: none; accent-color: #38bdf8; cursor: pointer; }
-        .control-group input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #38bdf8; cursor: pointer; }
-
-        .btn-group { display: flex; gap: 8px; margin-bottom: 10px; }
-        .action-btn { flex: 1; background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 700; cursor: pointer; text-align: center; transition: 0.2s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
-        .action-btn:hover { opacity: 0.95; }
-        
-        .render-btn { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
-        
-        .status-box { font-size: 0.78rem; color: #94a3b8; text-align: center; margin-top: 8px; font-weight: 500; background: #030712; padding: 8px; border-radius: 8px; border: 1px solid #1e293b; }
-        .download-link-btn { display: none; width: 100%; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 700; text-align: center; margin-top: 10px; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.5); }
+            70% { box-shadow: 0 0 0 12px rgba(2, 132, 199, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Header with Corner Settings Icon -->
+        <!-- Professional Header -->
         <div class="header">
             <div class="header-title-area">
-                <h1>AI AUTO CINEMATIC 4K</h1>
+                <div class="logo-icon">✨</div>
+                <h1>VIZIAG GLOBAL - AUTONOMOUS STUDIO</h1>
             </div>
             <div class="header-right">
                 <div class="pro-badge">PRO AI</div>
-                <button class="settings-btn" onclick="toggleSettingsModal(true)" title="API Settings">⚙️</button>
+                <button class="settings-btn" onclick="toggleSettingsModal(true)">⚙️</button>
             </div>
         </div>
 
-        <!-- Settings Modal Popup -->
+        <!-- Settings Modal -->
         <div class="modal-overlay" id="settings-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>⚙️ API & Model Settings</h3>
+                    <h3>⚙️ API Configuration</h3>
                     <button class="close-modal" onclick="toggleSettingsModal(false)">✕</button>
                 </div>
                 <div class="modal-group">
-                    <label>🔑 Grok / Llama API Key</label>
-                    <input type="password" id="modal-api-key" class="modal-input" placeholder="अपनी API की यहाँ दर्ज करें...">
+                    <label>🔑 Secure API Key</label>
+                    <input type="password" id="modal-api-key" class="modal-input" placeholder="API Key यहाँ दर्ज करें...">
                 </div>
-                <div class="modal-group">
-                    <label>🧠 Select Model</label>
-                    <select id="modal-model-select" class="modal-select">
-                        <option value="llama-3-70b" selected>Llama-3-70b (Active)</option>
-                        <option value="grok-3">Grok-3</option>
-                        <option value="grok-4.3">Grok 4.3</option>
-                    </select>
-                </div>
-                <button class="modal-save-btn" onclick="saveSettingsAndClose()">💾 Save Settings</button>
+                <button class="modal-save-btn" onclick="saveSettingsAndClose()">💾 Save Configuration</button>
             </div>
         </div>
 
+        <!-- Autonomous Prompt Director Box -->
+        <div class="prompt-card">
+            <div class="prompt-label">🧠 Autonomous Prompt Director</div>
+            <div class="prompt-input-group">
+                <input type="text" id="ai-prompt-input" class="prompt-input" value="Cinematic movie scene, anamorphic lens, 35mm film grain, 8K resolution..." placeholder="अपना प्रॉम्प्ट यहाँ दर्ज करें...">
+                <button class="run-prompt-btn" onclick="executeAutonomousPrompt()">⚡ Run AI</button>
+            </div>
+        </div>
+
+        <!-- File Upload Box -->
         <div class="upload-box" id="upload-trigger" onclick="document.getElementById('file-input').click()">
-            <div style="font-size: 1.8rem; margin-bottom: 8px;">🎬</div>
-            <div style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">वीडियो अपलोड करें (ऑटो-मैजिक के लिए)</div>
+            <div style="font-size: 1.8rem; margin-bottom: 6px;">🎬</div>
+            <div style="color: #cbd5e1; font-weight: 700; font-size: 0.88rem; margin-bottom: 3px;">वीडियो अपलोड करें (क्लिक करें)</div>
+            <div style="color: var(--text-muted); font-size: 0.72rem;">MP4, WebM हाई-रेजोल्यूशन सपोर्ट</div>
             <input type="file" id="file-input" accept="video/*" style="display: none;">
         </div>
 
+        <!-- Video Workspace Preview -->
         <div class="video-wrapper" id="video-wrapper">
-            <div class="letterbox-top" id="lb-top"></div>
+            <div class="letterbox-top"></div>
             <video id="source-video" crossorigin="anonymous" playsinline muted style="display:none;"></video>
             <canvas id="output-canvas"></canvas>
-            <div class="letterbox-bottom" id="lb-bottom"></div>
+            <div class="letterbox-bottom"></div>
         </div>
 
-        <!-- All-in-One Video Editing Tools Panel -->
-        <div class="controls-panel" id="manual-controls">
-            <div class="section-title">🎛️ Master Editing Tools Suite</div>
-            
-            <div class="control-group">
-                <label><span>⚡ Exposure (ब्राइटनेस)</span><span id="val-exposure">100%</span></label>
-                <input type="range" id="range-exposure" min="0" max="200" value="100" step="1" oninput="updateValues()">
+        <!-- Autonomous Live Logs Console -->
+        <div class="logs-section" id="logs-section">
+            <div class="logs-header">
+                <div class="logs-title">⚡ Live Autonomous Logs & Progress</div>
+                <div id="progress-indicator" style="font-size: 0.75rem; color: var(--accent-primary); font-weight: bold;">0%</div>
             </div>
-
-            <div class="control-group">
-                <label><span>🌓 Contrast (कंट्रास्ट)</span><span id="val-contrast">100%</span></label>
-                <input type="range" id="range-contrast" min="0" max="200" value="100" step="1" oninput="updateValues()">
-            </div>
-
-            <div class="control-group">
-                <label><span>🎨 Saturation (रंग चटखपन)</span><span id="val-saturation">100%</span></label>
-                <input type="range" id="range-saturation" min="0" max="200" value="100" step="1" oninput="updateValues()">
-            </div>
-
-            <div class="control-group">
-                <label><span>🌡️ Temperature (कलर टोन)</span><span id="val-temp">0</span></label>
-                <input type="range" id="range-temp" min="-50" max="50" value="0" step="1" oninput="updateValues()">
-            </div>
-
-            <div class="control-group">
-                <label><span>🔄 Hue Rotate (कलर शिफ्ट)</span><span id="val-hue">0°</span></label>
-                <input type="range" id="range-hue" min="0" max="360" value="0" step="1" oninput="updateValues()">
-            </div>
-
-            <div class="control-group">
-                <label><span>🌫️ Blur Filter (ब्लर इफेक्ट)</span><span id="val-blur">0px</span></label>
-                <input type="range" id="range-blur" min="0" max="10" value="0" step="0.5" oninput="updateValues()">
-            </div>
-
-            <div class="control-group">
-                <label><span>🎞️ Cinematic Letterbox (ब्लैक बार्स)</span><span id="val-letterbox">10%</span></label>
-                <input type="range" id="range-letterbox" min="0" max="25" value="10" step="1" oninput="updateValues()">
-            </div>
-
-            <div class="control-group">
-                <label><span>⏩ Video Playback Speed</span><span id="val-speed">1.0x</span></label>
-                <input type="range" id="range-speed" min="0.5" max="2.0" value="1.0" step="0.1" oninput="updateSpeed()">
+            <div class="logs-container" id="logs-console">
+                <div class="log-line">सिस्टम तैयार है। प्रॉम्प्ट और वीडियो का इंतज़ार है...</div>
             </div>
         </div>
 
-        <div id="controls-section" style="display: none;">
-            <div class="btn-group">
-                <button class="action-btn" onclick="togglePlay()">▶ Play / Pause</button>
-                <button class="action-btn render-btn" id="record-btn" onclick="startVIPExport()">🔴 Export 30s VIP Reel</button>
-            </div>
-
-            <div class="status-box" id="status-text">⚡ Llama 3.70B स्टूडियो तैयार है। वीडियो अपलोड करें।</div>
-
-            <a href="#" class="download-link-btn" id="download-btn" download="cinematic_master_reel.webm">⬇️ Download Master Reel</a>
-        </div>
+        <!-- Prominent Download Button Displayed on 100% Complete -->
+        <a href="#" class="download-link-btn" id="download-btn" download="viziag_cinematic_master.webm">⬇️ DOWNLOAD PRO RENDERED MOVIE (100% READY)</a>
     </div>
 
     <script>
-        let selectedFile = null;
         let mediaRecorder;
         let recordedChunks = [];
         let renderTimer = null;
@@ -184,25 +166,26 @@
         const videoWrapper = document.getElementById('video-wrapper');
         const sourceVideo = document.getElementById('source-video');
         const canvas = document.getElementById('output-canvas');
-        const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+        const ctx = canvas.getContext('2d', { alpha: false });
         
-        const controlsSection = document.getElementById('controls-section');
-        const manualControls = document.getElementById('manual-controls');
-        const statusText = document.getElementById('status-text');
+        const logsSection = document.getElementById('logs-section');
+        const logsConsole = document.getElementById('logs-console');
+        const progressIndicator = document.getElementById('progress-indicator');
         const downloadBtn = document.getElementById('download-btn');
-        const recordBtn = document.getElementById('record-btn');
+        const aiPromptInput = document.getElementById('ai-prompt-input');
 
-        const lbTop = document.getElementById('lb-top');
-        const lbBottom = document.getElementById('lb-bottom');
+        function addLog(text, type = 'normal') {
+            logsSection.style.display = 'block';
+            const div = document.createElement('div');
+            div.className = 'log-line ' + (type === 'error' ? 'log-error' : type === 'success' ? 'log-success' : '');
+            div.innerText = `[${new Date().toLocaleTimeString()}] ${text}`;
+            logsConsole.appendChild(div);
+            logsConsole.scrollTop = logsConsole.scrollHeight;
+        }
 
-        let expVal = 100, conVal = 100, satVal = 100, tempVal = 0, hueVal = 0, blurVal = 0, lbVal = 10;
-
-        // Load API settings on start
         window.onload = () => {
-            const savedKey = localStorage.getItem('grok_llama_api_key');
-            const savedModel = localStorage.getItem('grok_llama_selected_model');
+            const savedKey = localStorage.getItem('viziag_api_key');
             if (savedKey) document.getElementById('modal-api-key').value = savedKey;
-            if (savedModel) document.getElementById('modal-model-select').value = savedModel;
         };
 
         function toggleSettingsModal(show) {
@@ -211,27 +194,22 @@
 
         function saveSettingsAndClose() {
             const apiKey = document.getElementById('modal-api-key').value.trim();
-            const selectedModel = document.getElementById('modal-model-select').value;
-            
             if (!apiKey) {
-                alert("⚠️ कृपया अपनी API की दर्ज करें!");
+                alert("⚠️ कृपया सिक्योर एपीआई की दर्ज करें!");
                 return;
             }
-
-            localStorage.setItem('grok_llama_api_key', apiKey);
-            localStorage.setItem('grok_llama_selected_model', selectedModel);
-            
+            localStorage.setItem('viziag_api_key', apiKey);
             toggleSettingsModal(false);
-            alert("✓ API Key और Model सफलतापूर्वक सेव हो गए!");
+            addLog("API Key सफलतापूर्वक सेव की गई।", "success");
         }
 
         fileInput.onchange = (e) => {
             const file = e.target.files[0];
             if (file) {
+                addLog(`फाइल लोड हो रही है: ${file.name}`);
                 const tempVideo = document.createElement('video');
                 tempVideo.src = URL.createObjectURL(file);
                 tempVideo.onloadedmetadata = () => {
-                    selectedFile = file;
                     sourceVideo.src = tempVideo.src;
                     sourceVideo.load();
                     
@@ -241,76 +219,55 @@
                         
                         uploadTrigger.style.display = 'none';
                         videoWrapper.style.display = 'block';
-                        manualControls.style.display = 'block';
-                        controlsSection.style.display = 'block';
                         
-                        statusText.innerText = "⚡ Llama 3.70B ऑटो-सिनेमैटिक ग्रेडिंग एक्टिव है!";
-                        updateValues();
+                        addLog(`वीडियो फ्रेम मैपिंग सफल: ${canvas.width}x${canvas.height}`, "success");
                         renderLoop();
                     };
                 };
+            } else {
+                addLog("एरर: फाइल लोड करने में विफल!", "error");
             }
         };
-
-        function updateValues() {
-            expVal = document.getElementById('range-exposure').value;
-            conVal = document.getElementById('range-contrast').value;
-            satVal = document.getElementById('range-saturation').value;
-            tempVal = document.getElementById('range-temp').value;
-            hueVal = document.getElementById('range-hue').value;
-            blurVal = document.getElementById('range-blur').value;
-            lbVal = document.getElementById('range-letterbox').value;
-
-            document.getElementById('val-exposure').innerText = expVal + '%';
-            document.getElementById('val-contrast').innerText = conVal + '%';
-            document.getElementById('val-saturation').innerText = satVal + '%';
-            document.getElementById('val-temp').innerText = tempVal;
-            document.getElementById('val-hue').innerText = hueVal + '°';
-            document.getElementById('val-blur').innerText = blurVal + 'px';
-            document.getElementById('val-letterbox').innerText = lbVal + '%';
-
-            lbTop.style.height = lbVal + '%';
-            lbBottom.style.height = lbVal + '%';
-        }
-
-        function updateSpeed() {
-            const speed = document.getElementById('range-speed').value;
-            sourceVideo.playbackRate = parseFloat(speed);
-            document.getElementById('val-speed').innerText = speed + 'x';
-        }
-
-        function togglePlay() {
-            if (sourceVideo.paused) {
-                sourceVideo.currentTime = 0;
-                sourceVideo.play();
-            } else {
-                sourceVideo.pause();
-            }
-        }
 
         function renderLoop() {
             if (sourceVideo.readyState >= 2) {
                 ctx.save();
-                let sepiaVal = tempVal > 0 ? tempVal * 0.6 : 0;
-                let finalHue = tempVal < 0 ? (tempVal * 1.5) + parseInt(hueVal) : parseInt(hueVal);
-                ctx.filter = `brightness(${expVal}%) contrast(${conVal}%) saturate(${satVal}%) sepia(${sepiaVal}%) hue-rotate(${finalHue}deg) blur(${blurVal}px)`;
+                ctx.filter = `brightness(105%) contrast(110%) saturate(135%)`;
                 ctx.drawImage(sourceVideo, 0, 0, canvas.width, canvas.height);
                 ctx.restore();
             }
             requestAnimationFrame(renderLoop);
         }
 
-        function startVIPExport() {
-            sourceVideo.currentTime = 0;
-            sourceVideo.play();
+        // --- Execute processing immediately when Run AI button is clicked ---
+        function executeAutonomousPrompt() {
+            const promptText = aiPromptInput.value.trim();
+            if (!promptText) {
+                alert("⚠️ कृपया पहले प्रॉम्प्ट दर्ज करें!");
+                return;
+            }
+
+            if (sourceVideo.paused && sourceVideo.src) {
+                sourceVideo.currentTime = 0;
+                sourceVideo.play();
+            }
+
+            addLog(`ऑटोनॉमस प्रॉम्प्ट निष्पादित हो रहा है: "${promptText}"`, "success");
             
             recordedChunks = [];
-            const stream = canvas.captureStream(60); 
+            const stream = canvas.captureStream ? canvas.captureStream(60) : null;
             
+            if (!stream) {
+                addLog("एरर: कैनवास स्ट्रीम कैप्चर समर्थित नहीं है!", "error");
+                return;
+            }
+
             try {
                 mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9', videoBitsPerSecond: 15000000 });
+                addLog("मीडिया रिकॉर्डर VP9 कोडेक के साथ सक्रिय हुआ।");
             } catch (e) {
-                mediaRecorder = new MediaRecorder(stream); 
+                mediaRecorder = new MediaRecorder(stream);
+                addLog("डिफ़ॉल्ट कोडेक पर रिकॉर्डिंग शुरू की गई।");
             }
 
             mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
@@ -319,44 +276,33 @@
                 const blob = new Blob(recordedChunks, { type: 'video/webm' });
                 downloadBtn.href = URL.createObjectURL(blob);
                 downloadBtn.style.display = 'block';
-                statusText.innerText = "👑 Master रेंडर सफल! रील तैयार है।";
-                recordBtn.innerText = "🔴 Export 30s VIP Reel";
-                recordBtn.style.background = "linear-gradient(135deg, #10b981, #059669)";
+                progressIndicator.innerText = "100%";
+                addLog("100% - मूवी रेंडरिंग पूरी हुई! नीचे डाउनलोड बटन उपलब्ध है।", "success");
             };
 
             mediaRecorder.start();
-            statusText.innerText = "⏳ 30s VIP रेंडरिंग जारी है...";
-            recordBtn.innerText = "⏹️ Processing...";
-            recordBtn.style.background = "linear-gradient(135deg, #ef4444, #dc2626)";
+            addLog("AI प्रोसेसिंग और कलर ग्रेडिंग शुरू (0%)...");
 
-            let renderSeconds = 0;
+            let renderPercent = 0;
             if (renderTimer) clearInterval(renderTimer);
             
             renderTimer = setInterval(() => {
-                renderSeconds++;
-                statusText.innerText = `⏳ 30s रेंडरिंग... (${renderSeconds}s / 30s)`;
+                renderPercent += 4; 
+                let currentPercentInt = Math.min(Math.floor(renderPercent), 100);
+                progressIndicator.innerText = currentPercentInt + "%";
                 
-                if (renderSeconds >= 30 || sourceVideo.ended || sourceVideo.currentTime >= 30) {
+                if (currentPercentInt % 25 === 0) {
+                    addLog(`प्रोसेसिंग प्रगति: ${currentPercentInt}% पूरी हो चुकी है...`);
+                }
+                
+                if (currentPercentInt >= 100) {
                     clearInterval(renderTimer);
                     if (mediaRecorder && mediaRecorder.state === "recording") {
                         mediaRecorder.stop();
                     }
-                    sourceVideo.pause();
+                    if(!sourceVideo.paused) sourceVideo.pause();
                 }
             }, 1000);
-
-            sourceVideo.onended = () => {
-                clearInterval(renderTimer);
-                if (mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop();
-            };
-
-            recordBtn.onclick = () => {
-                clearInterval(renderTimer);
-                if (mediaRecorder && mediaRecorder.state === "recording") {
-                    mediaRecorder.stop();
-                    sourceVideo.pause();
-                }
-            };
         }
     </script>
 </body>
