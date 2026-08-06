@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinematic Studio Pro - Free & Local</title>
+    <title>Cinematic Studio Pro - Smooth Export</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #05070b; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
@@ -16,7 +16,7 @@
         .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 10px; overflow: hidden; margin-bottom: 20px; display: none; box-shadow: 0 8px 20px rgba(0,0,0,0.8); }
         video, canvas { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
         
-        /* Anamorphic Letterbox Bars (Movie Look) */
+        /* Anamorphic Letterbox Bars */
         .letterbox-top, .letterbox-bottom { position: absolute; left: 0; width: 100%; height: 12%; background: #000; z-index: 10; pointer-events: none; }
         .letterbox-top { top: 0; }
         .letterbox-bottom { bottom: 0; }
@@ -40,11 +40,11 @@
 <body>
 
     <div class="container">
-        <h1>🎬 Cinematic Studio (Zero Cost)</h1>
+        <h1>🎬 Cinematic Studio (Smooth)</h1>
 
         <div class="upload-box" id="upload-trigger" onclick="document.getElementById('file-input').click()">
             <div style="font-size: 2rem; margin-bottom: 8px;">📁</div>
-            <div style="color: #94a3b8; font-size: 0.95rem;">सिनेमैटिक वीडियो के लिए फाइल चुनें</div>
+            <div style="color: #94a3b8; font-size: 0.95rem;">वीडियो फाइल चुनें</div>
             <input type="file" id="file-input" accept="video/*" style="display: none;">
         </div>
 
@@ -66,12 +66,12 @@
             
             <div class="btn-group">
                 <button class="action-btn" onclick="togglePlay()">▶ Play / Pause</button>
-                <button class="action-btn render-btn" id="record-btn" onclick="startRecordingExport()">🔴 Record & Export HD</button>
+                <button class="action-btn render-btn" id="record-btn" onclick="startRecordingExport()">🔴 Record Smooth HD</button>
             </div>
 
-            <div class="status-box" id="status-text">तैयार है। वीडियो चलाकर 'Record & Export HD' दबाएं।</div>
+            <div class="status-box" id="status-text">तैयार है। 'Record Smooth HD' दबाएं।</div>
 
-            <a href="#" class="download-link-btn" id="download-btn" download="cinematic_movie.webm">⬇️ Download Cinematic Video</a>
+            <a href="#" class="download-link-btn" id="download-btn" download="smooth_cinematic.webm">⬇️ Download Smooth Video</a>
         </div>
     </div>
 
@@ -100,8 +100,9 @@
                 sourceVideo.src = url;
                 sourceVideo.load();
                 sourceVideo.onloadedmetadata = () => {
-                    canvas.width = sourceVideo.videoWidth || 1280;
-                    canvas.height = sourceVideo.videoHeight || 720;
+                    // HD 720p resolution set for smooth processing on mobile
+                    canvas.width = 1280;
+                    canvas.height = 720;
                     uploadTrigger.style.display = 'none';
                     videoWrapper.style.display = 'block';
                     controlsSection.style.display = 'block';
@@ -157,12 +158,16 @@
             }
             
             recordedChunks = [];
-            const stream = canvas.captureStream(30); // 30 FPS HD Stream
+            // Optimized 24 FPS (Cinematic standard frame rate) for smooth mobile rendering
+            const stream = canvas.captureStream(24); 
             
             try {
-                mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
+                mediaRecorder = new MediaRecorder(stream, { 
+                    mimeType: 'video/webm; codecs=vp9',
+                    videoBitsPerSecond: 2500000 // Stable bitrate to prevent lagging
+                });
             } catch (e) {
-                mediaRecorder = new MediaRecorder(stream); // Fallback
+                mediaRecorder = new MediaRecorder(stream); 
             }
 
             mediaRecorder.ondataavailable = function(event) {
@@ -176,24 +181,22 @@
                 const url = URL.createObjectURL(blob);
                 downloadBtn.href = url;
                 downloadBtn.style.display = 'block';
-                statusText.innerText = "रेंडर पूरा हुआ! नीचे दिए गए बटन से डाउनलोड करें।";
-                recordBtn.innerText = "🔴 Record & Export HD";
+                statusText.innerText = "रेंडर पूरा हुआ! अब वीडियो बिल्कुल स्मूथ चलेगी।";
+                recordBtn.innerText = "🔴 Record Smooth HD";
                 recordBtn.style.background = "#10b981";
             };
 
             mediaRecorder.start();
-            statusText.innerText = "रिकॉर्डिंग शुरू हो गई है... वीडियो के अंत तक इंतज़ार करें।";
+            statusText.innerText = "स्मूथ रिकॉर्डिंग चालू है... वीडियो खत्म होने का इंतज़ार करें।";
             recordBtn.innerText = "⏹️ Recording... (Click to Stop)";
             recordBtn.style.background = "#ef4444";
 
-            // When video ends, stop recording automatically
             sourceVideo.onended = () => {
                 if (mediaRecorder && mediaRecorder.state === "recording") {
                     mediaRecorder.stop();
                 }
             };
 
-            // Allow manual stop by clicking the recording button again
             recordBtn.onclick = () => {
                 if (mediaRecorder && mediaRecorder.state === "recording") {
                     mediaRecorder.stop();
