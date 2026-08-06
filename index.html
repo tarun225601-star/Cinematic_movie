@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinematic Movie Grade Studio</title>
+    <title>Ultimate Cinematic Studio Pro - FFmpeg Powered</title>
+    <!-- FFmpeg WASM CDN -->
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #05070b; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
@@ -16,53 +18,79 @@
         .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 10px; overflow: hidden; margin-bottom: 20px; display: none; box-shadow: 0 8px 20px rgba(0,0,0,0.8); }
         video, canvas { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
         
-        /* Movie Letterbox Bars (Anamorphic Effect) */
-        .letterbox-top, .letterbox-bottom { position: absolute; left: 0; width: 100%; height: 0%; background: #000; z-index: 10; transition: height 0.3s ease; pointer-events: none; }
+        /* Anamorphic Letterbox Bars */
+        .letterbox-top, .letterbox-bottom { position: absolute; left: 0; width: 100%; height: 12%; background: #000; z-index: 10; pointer-events: none; }
         .letterbox-top { top: 0; }
         .letterbox-bottom { bottom: 0; }
-        .cinematic-active .letterbox-top, .cinematic-active .letterbox-bottom { height: 12%; }
 
         .filters-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        .filter-btn { background: #1e293b; border: 1px solid #334155; color: #fff; padding: 12px; border-radius: 8px; cursor: font; font-weight: 600; cursor: pointer; transition: 0.2s; text-align: center; }
+        .filter-btn { background: #1e293b; border: 1px solid #334155; color: #fff; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; text-align: center; }
         .filter-btn:hover { background: #334155; border-color: #38bdf8; }
         .filter-btn.active { background: linear-gradient(135deg, #0284c7, #4f46e5); border-color: transparent; }
 
-        .action-btn { width: 100%; background: #10b981; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; display: none; text-decoration: none; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
-        .action-btn:hover { background: #059669; }
+        .btn-group { display: flex; gap: 10px; }
+        .action-btn { flex: 1; background: #4f46e5; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 0.95rem; font-weight: bold; cursor: pointer; text-align: center; transition: 0.2s; }
+        .action-btn:hover { opacity: 0.9; }
+        .render-btn { background: #10b981; }
+        .render-btn:hover { background: #059669; }
+
+        .progress-box { margin-top: 15px; display: none; text-align: center; }
+        .progress-bar-bg { width: 100%; background: #1e293b; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 8px; }
+        .progress-fill { width: 0%; height: 100%; background: #38bdf8; transition: width 0.2s; }
+        .progress-text { font-size: 0.85rem; color: #94a3b8; }
+        
+        .download-link-btn { display: none; width: 100%; background: #0284c7; color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-weight: bold; text-align: center; margin-top: 15px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🎬 Movie Cinematic Grade Studio</h1>
+        <h1>🎬 FFmpeg Cinematic Studio</h1>
 
         <div class="upload-box" id="upload-trigger" onclick="document.getElementById('file-input').click()">
             <div style="font-size: 2rem; margin-bottom: 8px;">📁</div>
-            <div style="color: #94a3b8; font-size: 0.95rem;">सिनेमैटिक बनाने के लिए वीडियो चुनें</div>
+            <div style="color: #94a3b8; font-size: 0.95rem;">रेंडर करने के लिए वीडियो चुनें</div>
             <input type="file" id="file-input" accept="video/*" style="display: none;">
         </div>
 
         <div class="video-wrapper" id="video-wrapper">
             <div class="letterbox-top"></div>
-            <video id="source-video" crossorigin="anonymous" playsinline controls></video>
+            <video id="source-video" crossorigin="anonymous" playsinline></video>
             <canvas id="output-canvas"></canvas>
             <div class="letterbox-bottom"></div>
         </div>
 
         <div id="controls-section" style="display: none;">
-            <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 8px; font-weight: bold; text-transform: uppercase;">मूवी लुक चुनें (Movie Grades):</div>
+            <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 8px; font-weight: bold; text-transform: uppercase;">मूवी लुक चुनें:</div>
             <div class="filters-grid">
-                <button class="filter-btn active" onclick="setFilter('hollywood', this)">🎥 Hollywood Blockbuster</button>
+                <button class="filter-btn active" onclick="setFilter('hollywood', this)">🎥 Hollywood Grade</button>
                 <button class="filter-btn" onclick="setFilter('cyberpunk', this)">⚡ Cyberpunk Neon</button>
-                <button class="filter-btn" onclick="setFilter('vintage', this)">🎞️ Vintage 70s Noir</button>
-                <button class="filter-btn" onclick="setFilter('matrix', this)">🟢 Matrix Green Tint</button>
+                <button class="filter-btn" onclick="setFilter('vintage', this)">🎞️ Vintage Noir</button>
+                <button class="filter-btn" onclick="setFilter('matrix', this)">🟢 Matrix Green</button>
             </div>
             
-            <button class="action-btn" id="play-preview-btn" style="display: block; background: #4f46e5; margin-bottom: 10px;" onclick="togglePlay()">▶ Play / Pause Cinematic View</button>
+            <div class="btn-group">
+                <button class="action-btn" onclick="togglePlay()">▶ Play / Pause</button>
+                <button class="action-btn render-btn" id="render-export-btn" onclick="startFFmpegRender()">✨ Export Master Render</button>
+            </div>
+
+            <div class="progress-box" id="progress-box">
+                <div class="progress-bar-bg">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-text" id="progress-text">FFmpeg Loading & Processing... 0%</div>
+            </div>
+
+            <a href="#" class="download-link-btn" id="download-btn" download="cinematic_output.mp4">⬇️ Download Rendered Video</a>
         </div>
     </div>
 
     <script>
+        const { FFmpeg } = FFmpegWASM;
+        let ffmpeg = null;
+        let selectedFile = null;
+        let currentFilter = 'hollywood';
+
         const fileInput = document.getElementById('file-input');
         const uploadTrigger = document.getElementById('upload-trigger');
         const videoWrapper = document.getElementById('video-wrapper');
@@ -70,13 +98,15 @@
         const canvas = document.getElementById('output-canvas');
         const ctx = canvas.getContext('2d');
         const controlsSection = document.getElementById('controls-section');
-
-        let currentFilter = 'hollywood';
-        let isPlaying = false;
+        const progressBox = document.getElementById('progress-box');
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+        const downloadBtn = document.getElementById('download-btn');
 
         fileInput.onchange = (e) => {
             const file = e.target.files[0];
             if (file) {
+                selectedFile = file;
                 const url = URL.createObjectURL(file);
                 sourceVideo.src = url;
                 sourceVideo.load();
@@ -86,20 +116,14 @@
                     uploadTrigger.style.display = 'none';
                     videoWrapper.style.display = 'block';
                     controlsSection.style.display = 'block';
-                    videoWrapper.classList.add('cinematic-active');
-                    startProcessing();
+                    startLivePreview();
                 };
             }
         };
 
         function togglePlay() {
-            if (sourceVideo.paused) {
-                sourceVideo.play();
-                isPlaying = true;
-            } else {
-                sourceVideo.pause();
-                isPlaying = false;
-            }
+            if (sourceVideo.paused) sourceVideo.play();
+            else sourceVideo.pause();
         }
 
         function setFilter(filterName, btn) {
@@ -108,51 +132,85 @@
             currentFilter = filterName;
         }
 
-        function startProcessing() {
+        function startLivePreview() {
             function renderFrame() {
                 if (!sourceVideo.paused && !sourceVideo.ended) {
                     ctx.drawImage(sourceVideo, 0, 0, canvas.width, canvas.height);
-                    applyMovieColorGrade(currentFilter);
+                    applyColorGradeToCanvas(currentFilter);
                 }
                 requestAnimationFrame(renderFrame);
             }
             requestAnimationFrame(renderFrame);
-            
-            sourceVideo.onplay = () => { isPlaying = true; };
-            sourceVideo.onpause = () => { isPlaying = false; };
         }
 
-        function applyMovieColorGrade(filter) {
+        function applyColorGradeToCanvas(filter) {
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const d = imgData.data;
-
             for (let i = 0; i < d.length; i += 4) {
                 let r = d[i], g = d[i+1], b = d[i+2];
-
                 if (filter === 'hollywood') {
-                    // Teal & Orange Blockbuster Look (Shadows teal, Highlights warm orange)
-                    d[i] = r * 1.1 + 10;     // Red boost
-                    d[i+1] = g * 0.95;       // Green balance
-                    d[i+2] = b * 0.85;       // Blue crush in shadows
+                    d[i] = r * 1.1 + 10; d[i+1] = g * 0.95; d[i+2] = b * 0.85;
                 } else if (filter === 'cyberpunk') {
-                    // Neon Pink & Electric Cyan High Contrast
-                    d[i] = r * 1.3;          // High Red/Pink
-                    d[i+1] = g * 0.8;        // Low green
-                    d[i+2] = b * 1.4 + 20;   // High Blue/Cyan glow
+                    d[i] = r * 1.3; d[i+1] = g * 0.8; d[i+2] = b * 1.4 + 20;
                 } else if (filter === 'vintage') {
-                    // Sepia / Warm Golden Nostalgia
                     let avg = (r + g + b) / 3;
-                    d[i] = avg * 1.2;
-                    d[i+1] = avg * 1.0;
-                    d[i+2] = avg * 0.8;
+                    d[i] = avg * 1.2; d[i+1] = avg * 1.0; d[i+2] = avg * 0.8;
                 } else if (filter === 'matrix') {
-                    // Heavy Green Sci-Fi Grade
-                    d[i] = r * 0.7;
-                    d[i+1] = g * 1.3 + 15;
-                    d[i+2] = b * 0.7;
+                    d[i] = r * 0.7; d[i+1] = g * 1.3 + 15; d[i+2] = b * 0.7;
                 }
             }
             ctx.putImageData(imgData, 0, 0);
+        }
+
+        async function startFFmpegRender() {
+            if (!selectedFile) return;
+            progressBox.style.display = 'block';
+            downloadBtn.style.display = 'none';
+            progressText.innerText = "Initializing FFmpeg Engine...";
+
+            if (!ffmpeg) {
+                ffmpeg = new FFmpeg();
+                ffmpeg.on("log", ({ message }) => {
+                    console.log(message);
+                });
+                ffmpeg.on("progress", ({ progress }) => {
+                    let percent = Math.round(progress * 100);
+                    if(percent > 100) percent = 100;
+                    progressFill.style.width = percent + '%';
+                    progressText.innerText = `Rendering Video via FFmpeg... ${percent}%`;
+                });
+                await ffmpeg.load();
+            }
+
+            progressText.innerText = "Reading file into memory...";
+            const data = await selectedFile.arrayBuffer();
+            await ffmpeg.writeFile("input.mp4", new Uint8Array(data));
+
+            progressText.innerText = "Applying Cinematic Filter & Processing...";
+            
+            // FFmpeg filter configuration based on selected preset
+            let vfString = "scale=1280:720";
+            if (currentFilter === 'hollywood') {
+                vfString += ",colorbalance=rs=0.1:gs=-0.05:bs=-0.1,crop=iw:ih*0.88"; // Teal & orange + Letterbox crop
+            } else if (currentFilter === 'cyberpunk') {
+                vfString += ",eq=contrast=1.3:saturation=1.4,crop=iw:ih*0.88";
+            } else if (currentFilter === 'vintage') {
+                vfString += ",eq=saturation=0.5:brightness=-0.05,crop=iw:ih*0.88";
+            } else if (currentFilter === 'matrix') {
+                vfString += ",colorbalance=gm=0.2:gs=0.2,crop=iw:ih*0.88";
+            }
+
+            await ffmpeg.exec(["-i", "input.mp4", "-vf", vfString, "-c:v", "libx264", "-preset", "ultrafast", "output.mp4"]);
+
+            progressText.innerText = "Finalizing master render file...";
+            const outputData = await ffmpeg.readFile("output.mp4");
+            const blob = new Blob([outputData.buffer], { type: "video/mp4" });
+            const outputUrl = URL.createObjectURL(blob);
+
+            progressBox.style.display = 'none';
+            downloadBtn.href = outputUrl;
+            downloadBtn.style.display = 'block';
+            alert('तैयार है! नीचे दिए गए बटन से अपनी सिनेमैटिक वीडियो डाउनलोड कर लें।');
         }
     </script>
 </body>
