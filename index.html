@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Llama 3.70B & Grok AI Video Editor Studio</title>
+    <title>Llama 3.70B & Grok AI Video Editor Studio (Persistent Key)</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
         body { background-color: #030712; color: #f9fafb; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 15px; }
@@ -13,12 +13,16 @@
         h1 { font-size: 1rem; background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: 0.5px; }
         .vip-badge { background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-size: 0.65rem; padding: 5px 10px; border-radius: 20px; font-weight: 900; text-transform: uppercase; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
 
-        /* API & Model Configuration Section */
+        /* API & Model Configuration Section with Save */
         .api-config-box { background: #0f172a; border: 1px solid #334155; border-radius: 14px; padding: 14px; margin-bottom: 15px; }
         .api-config-box label { display: block; font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; }
         .row-inputs { display: flex; gap: 8px; margin-bottom: 8px; }
         .api-input, .model-select { flex: 1; background: #030712; border: 1px solid #1e293b; border-radius: 10px; padding: 10px; color: #fff; font-size: 0.82rem; outline: none; }
         
+        .api-action-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        .save-key-btn { background: #10b981; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer; transition: 0.2s; white-space: nowrap; }
+        .save-key-btn:hover { opacity: 0.9; }
+
         .prompt-input-group { display: flex; gap: 8px; margin-top: 8px; }
         .prompt-input-group input { flex: 1; background: #030712; border: 1px solid #1e293b; border-radius: 10px; padding: 10px; color: #fff; font-size: 0.82rem; outline: none; }
         .ai-exec-btn { background: linear-gradient(135deg, #0ea5e9, #6366f1); color: white; border: none; padding: 0 14px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; white-space: nowrap; font-size: 0.8rem; }
@@ -78,7 +82,12 @@
                 </select>
             </div>
             
-            <label>🧠 Autonomous Prompt Director</label>
+            <div class="api-action-row">
+                <button class="save-key-btn" onclick="saveApiKey()">💾 Save Key in Browser</button>
+                <span id="key-status-msg" style="font-size: 0.75rem; color: #10b981; align-self: center; display: none;">✓ Saved Successfully!</span>
+            </div>
+            
+            <label style="margin-top: 10px;">🧠 Autonomous Prompt Director</label>
             <div class="prompt-input-group">
                 <input type="text" id="ai-command-input" placeholder="जैसे: डार्क सिनेमैटिक लुक या वाइब्रेंट इंस्टाग्राम रील्स बनाओ...">
                 <button class="ai-exec-btn" onclick="runLlamaAutonomousAI()">⚡ Run AI</button>
@@ -179,6 +188,36 @@
 
         let expVal = 100, conVal = 100, satVal = 100, tempVal = 0, hueVal = 0, blurVal = 0, lbVal = 10;
 
+        // Load saved API key & model choice on startup
+        window.onload = () => {
+            const savedKey = localStorage.getItem('grok_llama_api_key');
+            const savedModel = localStorage.getItem('grok_llama_selected_model');
+            if (savedKey) {
+                document.getElementById('grok-api-key').value = savedKey;
+            }
+            if (savedModel) {
+                document.getElementById('grok-model-select').value = savedModel;
+            }
+        };
+
+        // Save API Key Function
+        function saveApiKey() {
+            const apiKey = document.getElementById('grok-api-key').value.trim();
+            const selectedModel = document.getElementById('grok-model-select').value;
+            
+            if (!apiKey) {
+                alert("⚠️ कृपया पहले सही API की दर्ज करें!");
+                return;
+            }
+
+            localStorage.setItem('grok_llama_api_key', apiKey);
+            localStorage.setItem('grok_llama_selected_model', selectedModel);
+
+            const statusMsg = document.getElementById('key-status-msg');
+            statusMsg.style.display = 'inline';
+            setTimeout(() => { statusMsg.style.display = 'none'; }, 2500);
+        }
+
         fileInput.onchange = (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -217,7 +256,7 @@
             const promptText = overridePrompt || document.getElementById('ai-command-input').value.toLowerCase();
             
             if (!apiKey && !overridePrompt) {
-                alert("⚠️ कृपया अपनी Grok API की दर्ज करें!");
+                alert("⚠️ कृपया अपनी Grok API की दर्ज करके 'Save Key' पर क्लिक करें!");
                 return;
             }
 
