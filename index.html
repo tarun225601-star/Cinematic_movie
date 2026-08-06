@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HD Cinematic Studio Pro - Debug Mode</title>
-    <!-- FFmpeg WASM CDN -->
-    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+    <title>Cinematic Studio Pro - Free & Local</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #05070b; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
@@ -18,7 +16,7 @@
         .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 10px; overflow: hidden; margin-bottom: 20px; display: none; box-shadow: 0 8px 20px rgba(0,0,0,0.8); }
         video, canvas { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
         
-        /* Letterbox Bars */
+        /* Anamorphic Letterbox Bars (Movie Look) */
         .letterbox-top, .letterbox-bottom { position: absolute; left: 0; width: 100%; height: 12%; background: #000; z-index: 10; pointer-events: none; }
         .letterbox-top { top: 0; }
         .letterbox-bottom { bottom: 0; }
@@ -28,16 +26,13 @@
         .filter-btn:hover { background: #334155; border-color: #38bdf8; }
         .filter-btn.active { background: linear-gradient(135deg, #0284c7, #4f46e5); border-color: transparent; }
 
-        .btn-group { display: flex; gap: 10px; }
+        .btn-group { display: flex; gap: 10px; margin-bottom: 10px; }
         .action-btn { flex: 1; background: #4f46e5; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 0.95rem; font-weight: bold; cursor: pointer; text-align: center; transition: 0.2s; }
         .action-btn:hover { opacity: 0.9; }
         .render-btn { background: #10b981; }
         .render-btn:hover { background: #059669; }
 
-        .progress-box { margin-top: 15px; display: none; text-align: center; }
-        .progress-bar-bg { width: 100%; background: #1e293b; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 8px; }
-        .progress-fill { width: 0%; height: 100%; background: #38bdf8; transition: width 0.2s; }
-        .progress-text { font-size: 0.85rem; color: #94a3b8; word-break: break-all; }
+        .status-box { font-size: 0.85rem; color: #94a3b8; text-align: center; margin-top: 10px; }
         
         .download-link-btn { display: none; width: 100%; background: #0284c7; color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-weight: bold; text-align: center; margin-top: 15px; box-shadow: 0 4px 12px rgba(2,132,199,0.3); }
     </style>
@@ -45,11 +40,11 @@
 <body>
 
     <div class="container">
-        <h1>🎬 HD Studio (Debug Mode)</h1>
+        <h1>🎬 Cinematic Studio (Zero Cost)</h1>
 
         <div class="upload-box" id="upload-trigger" onclick="document.getElementById('file-input').click()">
             <div style="font-size: 2rem; margin-bottom: 8px;">📁</div>
-            <div style="color: #94a3b8; font-size: 0.95rem;">वीडियो चुनें (एरर ट्रैकर के साथ)</div>
+            <div style="color: #94a3b8; font-size: 0.95rem;">सिनेमैटिक वीडियो के लिए फाइल चुनें</div>
             <input type="file" id="file-input" accept="video/*" style="display: none;">
         </div>
 
@@ -63,7 +58,7 @@
         <div id="controls-section" style="display: none;">
             <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 8px; font-weight: bold; text-transform: uppercase;">मूवी लुक चुनें:</div>
             <div class="filters-grid">
-                <button class="filter-btn active" onclick="setFilter('hollywood', this)">🎥 Hollywood HD</button>
+                <button class="filter-btn active" onclick="setFilter('hollywood', this)">🎥 Hollywood Grade</button>
                 <button class="filter-btn" onclick="setFilter('cyberpunk', this)">⚡ Cyberpunk Neon</button>
                 <button class="filter-btn" onclick="setFilter('vintage', this)">🎞️ Vintage Noir</button>
                 <button class="filter-btn" onclick="setFilter('matrix', this)">🟢 Matrix Green</button>
@@ -71,24 +66,20 @@
             
             <div class="btn-group">
                 <button class="action-btn" onclick="togglePlay()">▶ Play / Pause</button>
-                <button class="action-btn render-btn" onclick="startHDRender()">✨ Export HD Render</button>
+                <button class="action-btn render-btn" id="record-btn" onclick="startRecordingExport()">🔴 Record & Export HD</button>
             </div>
 
-            <div class="progress-box" id="progress-box" style="display: block;">
-                <div class="progress-bar-bg">
-                    <div class="progress-fill" id="progress-fill"></div>
-                </div>
-                <div class="progress-text" id="progress-text">तैयार है। 'Export HD Render' दबाएं।</div>
-            </div>
+            <div class="status-box" id="status-text">तैयार है। वीडियो चलाकर 'Record & Export HD' दबाएं।</div>
 
-            <a href="#" class="download-link-btn" id="download-btn" download="cinematic_hd_output.mp4">⬇️ Download HD Rendered Video</a>
+            <a href="#" class="download-link-btn" id="download-btn" download="cinematic_movie.webm">⬇️ Download Cinematic Video</a>
         </div>
     </div>
 
     <script>
-        let ffmpeg = null;
         let selectedFile = null;
         let currentFilter = 'hollywood';
+        let mediaRecorder;
+        let recordedChunks = [];
 
         const fileInput = document.getElementById('file-input');
         const uploadTrigger = document.getElementById('upload-trigger');
@@ -97,10 +88,9 @@
         const canvas = document.getElementById('output-canvas');
         const ctx = canvas.getContext('2d');
         const controlsSection = document.getElementById('controls-section');
-        const progressBox = document.getElementById('progress-box');
-        const progressFill = document.getElementById('progress-fill');
-        const progressText = document.getElementById('progress-text');
+        const statusText = document.getElementById('status-text');
         const downloadBtn = document.getElementById('download-btn');
+        const recordBtn = document.getElementById('record-btn');
 
         fileInput.onchange = (e) => {
             const file = e.target.files[0];
@@ -161,81 +151,55 @@
             ctx.putImageData(imgData, 0, 0);
         }
 
-        async function startHDRender() {
-            if (!selectedFile) {
-                alert("कृपया पहले वीडियो चुनें!");
-                return;
+        function startRecordingExport() {
+            if (sourceVideo.paused) {
+                sourceVideo.play();
             }
             
-            progressBox.style.display = 'block';
-            downloadBtn.style.display = 'none';
-            progressFill.style.width = '10%';
-            progressText.innerText = "Checking FFmpeg library...";
-
+            recordedChunks = [];
+            const stream = canvas.captureStream(30); // 30 FPS HD Stream
+            
             try {
-                if (typeof FFmpegWASM === 'undefined') {
-                    throw new Error("FFmpeg script failed to load from CDN (Check Internet/CORS).");
-                }
-
-                const { FFmpeg } = FFmpegWASM;
-
-                if (!ffmpeg) {
-                    progressText.innerText = "Loading FFmpeg Engine from CDN (approx 25MB)...";
-                    ffmpeg = new FFmpeg();
-                    
-                    ffmpeg.on("log", ({ message }) => {
-                        console.log("FFmpeg Log:", message);
-                    });
-
-                    ffmpeg.on("progress", ({ progress }) => {
-                        let percent = Math.round(progress * 100);
-                        if(percent > 100) percent = 100;
-                        progressFill.style.width = percent + '%';
-                        progressText.innerText = `Rendering Video... ${percent}%`;
-                    });
-
-                    await ffmpeg.load();
-                }
-
-                progressFill.style.width = '40%';
-                progressText.innerText = "Reading video file into memory...";
-                const data = await selectedFile.arrayBuffer();
-                await ffmpeg.writeFile("input.mp4", new Uint8Array(data));
-
-                progressFill.style.width = '60%';
-                progressText.innerText = "Applying Cinematic Filters & Encoding...";
-                
-                let vfString = "scale=1280:720";
-                if (currentFilter === 'hollywood') {
-                    vfString += ",colorbalance=rs=0.1:gs=-0.05:bs=-0.1,crop=iw:ih*0.88";
-                } else if (currentFilter === 'cyberpunk') {
-                    vfString += ",eq=contrast=1.3:saturation=1.4,crop=iw:ih*0.88";
-                } else if (currentFilter === 'vintage') {
-                    vfString += ",eq=saturation=0.5:brightness=-0.05,crop=iw:ih*0.88";
-                } else if (currentFilter === 'matrix') {
-                    vfString += ",colorbalance=gm=0.2:gs=0.2,crop=iw:ih*0.88";
-                }
-
-                await ffmpeg.exec(["-i", "input.mp4", "-vf", vfString, "-c:v", "libx264", "-preset", "ultrafast", "output.mp4"]);
-
-                progressFill.style.width = '90%';
-                progressText.innerText = "Preparing download file...";
-                const outputData = await ffmpeg.readFile("output.mp4");
-                const blob = new Blob([outputData.buffer], { type: "video/mp4" });
-                const outputUrl = URL.createObjectURL(blob);
-
-                progressFill.style.width = '100%';
-                progressText.innerText = "Render Complete!";
-                downloadBtn.href = outputUrl;
-                downloadBtn.style.display = 'block';
-                alert('HD वीडियो सफलतापूर्वक रेंडर हो गई है!');
-
-            } catch (err) {
-                console.error("Detailed Error:", err);
-                progressFill.style.width = '100%';
-                progressFill.style.background = '#ef4444'; // Red bar on error
-                progressText.innerHTML = `<span style="color: #ef4444; font-weight: bold;">Error Found:</span> ${err.message || err}`;
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
+            } catch (e) {
+                mediaRecorder = new MediaRecorder(stream); // Fallback
             }
+
+            mediaRecorder.ondataavailable = function(event) {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = function() {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                downloadBtn.href = url;
+                downloadBtn.style.display = 'block';
+                statusText.innerText = "रेंडर पूरा हुआ! नीचे दिए गए बटन से डाउनलोड करें।";
+                recordBtn.innerText = "🔴 Record & Export HD";
+                recordBtn.style.background = "#10b981";
+            };
+
+            mediaRecorder.start();
+            statusText.innerText = "रिकॉर्डिंग शुरू हो गई है... वीडियो के अंत तक इंतज़ार करें।";
+            recordBtn.innerText = "⏹️ Recording... (Click to Stop)";
+            recordBtn.style.background = "#ef4444";
+
+            // When video ends, stop recording automatically
+            sourceVideo.onended = () => {
+                if (mediaRecorder && mediaRecorder.state === "recording") {
+                    mediaRecorder.stop();
+                }
+            };
+
+            // Allow manual stop by clicking the recording button again
+            recordBtn.onclick = () => {
+                if (mediaRecorder && mediaRecorder.state === "recording") {
+                    mediaRecorder.stop();
+                    sourceVideo.pause();
+                }
+            };
         }
     </script>
 </body>
