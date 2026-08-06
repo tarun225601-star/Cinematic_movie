@@ -92,7 +92,7 @@
 
         <div class="logs-section" id="logs-section">
             <div class="logs-container" id="logs-console">
-                <div class="log-line">सिस्टम तैयार है। ⚙️ सेटिंग में दोनों API की दर्ज करें।</div>
+                <div class="log-line">सिस्टम तैयार है। ⚙️ सेटिंग में दोनों अलग-अलग API की दर्ज करें।</div>
             </div>
         </div>
 
@@ -136,7 +136,7 @@
             const grokKey = document.getElementById('grok-api-key').value;
             localStorage.setItem('kling_key', klingKey);
             localStorage.setItem('grok_key', grokKey);
-            alert("✅ Kling और Grok API Keys सफलतापूर्व सेव हो गई हैं!");
+            alert("✅ Kling और Grok API Keys अलग-अलग सफलतापूर्व सेव हो गई हैं!");
             toggleSettings(false);
         }
 
@@ -186,7 +186,7 @@
             }
 
             if (!klingKey || !grokKey) {
-                alert("⚠️ कृपया ⚙️ सेटिंग में जाकर दोनों (Kling और Grok) API Keys दर्ज करें!");
+                alert("⚠️ कृपया ⚙️ सेटिंग में जाकर Kling और Grok दोनों API Keys दर्ज करें!");
                 toggleSettings(true);
                 return;
             }
