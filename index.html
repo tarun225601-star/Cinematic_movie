@@ -3,152 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viziag Global - Ultimate 8K Cinematic & Face Glow Studio</title>
+    <title>Viziag Global - Ultra Radiance & Fair Skin Studio</title>
     <style>
         :root {
-            --bg-base: #030712;
-            --bg-card: #0b0f19;
-            --bg-card-hover: #0f172a;
-            --border-color: #1e293b;
-            --border-hover: #38bdf8;
-            --text-main: #f9fafb;
-            --text-muted: #94a3b8;
+            --bg-base: #050b14;
+            --bg-card: #0f172a;
+            --bg-card-hover: #1e293b;
+            --border-color: #334155;
             --accent-primary: #38bdf8;
-            --accent-success: #10b981;
-            --accent-danger: #ef4444;
+            --accent-glow: #ec4899;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
         body { background-color: var(--bg-base); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 15px; }
-        
-        .container { width: 100%; max-width: 650px; background: var(--bg-card); border-radius: 20px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); border: 1px solid var(--border-color); position: relative; }
-        
+
+        .container { width: 100%; max-width: 650px; background: var(--bg-card); border-radius: 20px; padding: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.8); border: 1px solid var(--border-color); }
+
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
-        .header-title-area { display: flex; align-items: center; gap: 8px; }
-        h1 { font-size: 0.8rem; background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
+        h1 { font-size: 0.8rem; background: linear-gradient(135deg, #38bdf8, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: 0.5px; }
         
-        .header-right { display: flex; align-items: center; gap: 8px; }
-        .pro-badge { background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); color: var(--accent-primary); font-size: 0.65rem; padding: 4px 10px; border-radius: 20px; font-weight: 800; text-transform: uppercase; }
-        .settings-btn { background: var(--border-color); border: 1px solid var(--border-color); color: var(--text-main); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; }
+        .header-actions { display: flex; gap: 8px; align-items: center; }
+        .copy-code-btn { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.72rem; font-weight: 800; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        .pro-badge { background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.4); color: var(--accent-glow); font-size: 0.65rem; padding: 4px 10px; border-radius: 20px; font-weight: 800; text-transform: uppercase; }
 
-        /* Modal */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 15px; }
-        .modal-content { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; width: 100%; max-width: 400px; padding: 20px; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        .modal-header h3 { font-size: 0.9rem; color: var(--accent-primary); font-weight: 800; }
-        .close-modal { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+        /* Controls Panel */
+        .panel { background: var(--bg-card-hover); border: 1px solid var(--border-color); border-radius: 14px; padding: 14px; margin-bottom: 15px; }
+        .panel-title { font-size: 0.75rem; color: var(--accent-primary); font-weight: 800; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+
+        .control-group { margin-bottom: 12px; }
+        .control-group:last-child { margin-bottom: 0; }
+        .control-label { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
+        .control-label span { color: var(--accent-primary); }
         
-        .modal-group { margin-bottom: 12px; }
-        .modal-group label { display: block; font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
-        .modal-input { width: 100%; background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; color: #fff; font-size: 0.82rem; outline: none; }
-        .modal-save-btn { width: 100%; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 10px; }
+        input[type="range"] { width: 100%; accent-color: var(--accent-primary); cursor: pointer; height: 6px; background: #020617; border-radius: 3px; }
 
-        /* AI Prompt & Face Glow Suite */
-        .prompt-card { background: var(--bg-card-hover); border: 1px solid var(--border-color); border-radius: 14px; padding: 14px; margin-bottom: 15px; }
-        .prompt-label { font-size: 0.72rem; color: var(--accent-primary); font-weight: 800; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-        .prompt-input-group { display: flex; gap: 8px; margin-bottom: 10px; }
-        .prompt-input { flex: 1; background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; color: var(--text-main); font-size: 0.82rem; outline: none; }
-        .run-prompt-btn { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; padding: 0 15px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.82rem; }
+        .run-btn { width: 100%; background: linear-gradient(135deg, #0284c7, #2563eb); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 0.85rem; margin-top: 10px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
+        .run-btn:hover { background: linear-gradient(135deg, #0369a1, #1d4ed8); }
 
-        /* Beauty Controls */
-        .beauty-controls { display: flex; gap: 10px; align-items: center; background: var(--bg-base); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color); }
-        .beauty-controls label { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
-        .beauty-controls input[type="range"] { flex: 1; accent-color: var(--accent-primary); cursor: pointer; }
-        .beauty-value { font-size: 0.75rem; color: var(--accent-primary); font-weight: bold; width: 35px; text-align: right; }
+        /* Upload Box */
+        .upload-box { border: 2px dashed var(--border-color); border-radius: 14px; padding: 22px; text-align: center; cursor: pointer; background: #020617; margin-bottom: 15px; transition: 0.2s; }
+        .upload-box:hover { border-color: var(--accent-primary); background: rgba(56, 189, 248, 0.03); }
 
-        /* Upload Area */
-        .upload-box { border: 2px dashed var(--border-color); border-radius: 14px; padding: 20px; text-align: center; cursor: pointer; background: var(--bg-card-hover); margin-bottom: 15px; }
-        
-        .video-wrapper { position: relative; width: 100%; aspect-ratio: 9/16; max-height: 260px; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 15px; display: none; border: 1px solid var(--border-color); margin-left: auto; margin-right: auto; }
+        .video-wrapper { position: relative; width: 100%; aspect-ratio: 9/16; max-height: 280px; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 15px; display: none; border: 1px solid var(--border-color); margin-left: auto; margin-right: auto; }
         video, canvas { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
-        
-        .letterbox-top, .letterbox-bottom { position: absolute; left: 0; width: 100%; background: #000; z-index: 10; pointer-events: none; }
-        .letterbox-top { top: 0; height: 10%; }
-        .letterbox-bottom { bottom: 0; height: 10%; }
 
-        /* Live Logs Console */
-        .logs-section { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 15px; display: none; }
+        /* Logs Console */
+        .logs-section { background: #020617; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 15px; display: none; }
         .logs-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; }
         .logs-title { font-size: 0.7rem; color: var(--accent-primary); font-weight: 800; text-transform: uppercase; }
-        
-        .logs-container { max-height: 120px; overflow-y: auto; font-family: monospace; font-size: 0.72rem; color: #cbd5e1; }
+        .logs-container { max-height: 100px; overflow-y: auto; font-family: monospace; font-size: 0.72rem; color: #cbd5e1; }
         .log-line { margin-bottom: 4px; border-left: 2px solid var(--accent-primary); padding-left: 6px; }
-        .log-error { border-left-color: var(--accent-danger) !important; color: #f87171 !important; font-weight: bold; }
-        .log-success { border-left-color: var(--accent-success) !important; color: #34d399 !important; font-weight: bold; }
 
         /* Download Button */
-        .download-link-btn { display: none; width: 100%; background: linear-gradient(135deg, #059669, #047857); color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-weight: 800; text-align: center; font-size: 0.9rem; box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4); margin-top: 10px; }
+        .download-link-btn { display: none; width: 100%; background: linear-gradient(135deg, #10b981, #059669); color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-weight: 800; text-align: center; font-size: 0.9rem; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4); }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="header">
-            <div class="header-title-area">
-                <h1>✨ VIZIAG ULTIMATE 8K CINEMA & GLOW</h1>
-            </div>
-            <div class="header-right">
-                <div class="pro-badge">ULTRA VIP</div>
-                <button class="settings-btn" onclick="toggleSettingsModal(true)">⚙️</button>
+            <h1>✨ VIZIAG STUDIO</h1>
+            <div class="header-actions">
+                <button class="copy-code-btn" onclick="copyFullCode()">📋 Copy Code</button>
+                <div class="pro-badge">PRO</div>
             </div>
         </div>
 
-        <div class="modal-overlay" id="settings-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>⚙️ API Configuration</h3>
-                    <button class="close-modal" onclick="toggleSettingsModal(false)">✕</button>
-                </div>
-                <div class="modal-group">
-                    <label>🔑 Secure API Key</label>
-                    <input type="password" id="modal-api-key" class="modal-input" placeholder="API Key यहाँ डालें...">
-                </div>
-                <button class="modal-save-btn" onclick="saveSettingsAndClose()">💾 Save Configuration</button>
+        <!-- Advanced Skin Whitening & Glow Suite -->
+        <div class="panel">
+            <div class="panel-title">💎 Advanced Skin Brightening & Fair Glow Engine</div>
+            
+            <div class="control-group" style="margin-bottom: 8px;">
+                <div class="control-label">✨ Skin Whitening & Fairness Boost: <span id="val-fair">85%</span></div>
+                <input type="range" id="slider-fair" min="0" max="100" value="85" oninput="updateVals()">
             </div>
+
+            <div class="control-group" style="margin-bottom: 8px;">
+                <div class="control-label">🌸 Soft Glow & Radiant Smoothness: <span id="val-glow">75%</span></div>
+                <input type="range" id="slider-glow" min="0" max="100" value="75" oninput="updateVals()">
+            </div>
+
+            <div class="control-group">
+                <div class="control-label">🌟 Cinematic Clarity & Brightness: <span id="val-bright">60%</span></div>
+                <input type="range" id="slider-bright" min="0" max="100" value="60" oninput="updateVals()">
+            </div>
+
+            <button class="run-btn" onclick="startProcessing()">⚡ प्रोसेस करें और गोरा व सुंदर वीडियो बनाएं</button>
         </div>
 
-        <!-- 🧠 AI PROMPT & EXTREME FACE GLOW CONTROLLER -->
-        <div class="prompt-card">
-            <div class="prompt-label">🧠 Autonomous Prompt & Face Beautifier Suite</div>
-            <div class="prompt-input-group">
-                <input type="text" id="ai-prompt-input" class="prompt-input" value="Ultra-detailed 8K resolution, stunning cinematic face glow, flawless skin smoothing, Hollywood color grade..." placeholder="सिनेमैटिक प्रॉम्प्ट लिखें...">
-                <button class="run-prompt-btn" onclick="executeAutonomousPrompt()">⚡ Run AI</button>
-            </div>
-            <div class="beauty-controls">
-                <label>✨ Face Beauty & Glow:</label>
-                <input type="range" id="beauty-slider" min="0" max="100" value="85" oninput="updateBeautyValue(this.value)">
-                <span class="beauty-value" id="beauty-val-text">85%</span>
-            </div>
-        </div>
-
-        <!-- File Upload Box -->
+        <!-- Upload Box -->
         <div class="upload-box" id="upload-trigger" onclick="document.getElementById('file-input').click()">
-            <div style="font-size: 1.5rem; margin-bottom: 5px;">🎬</div>
-            <div style="color: #cbd5e1; font-weight: 600; font-size: 0.82rem;">वीडियो अपलोड करें (क्लिक करें)</div>
+            <div style="font-size: 1.8rem; margin-bottom: 5px;">🎬</div>
+            <div style="color: #cbd5e1; font-weight: 600; font-size: 0.82rem;">यहाँ क्लिक करके वीडियो अपलोड करें</div>
             <input type="file" id="file-input" accept="video/*" style="display: none;">
         </div>
 
         <!-- Video Workspace Preview -->
         <div class="video-wrapper" id="video-wrapper">
-            <div class="letterbox-top"></div>
             <video id="source-video" crossorigin="anonymous" playsinline muted style="display:none;"></video>
             <canvas id="output-canvas"></canvas>
-            <div class="letterbox-bottom"></div>
         </div>
 
-        <!-- Autonomous Live Logs Console -->
+        <!-- Logs Console -->
         <div class="logs-section" id="logs-section">
             <div class="logs-header">
-                <div class="logs-title">⚡ Live Autonomous Logs</div>
+                <div class="logs-title">⚡ Live Processing Log</div>
                 <div id="progress-indicator" style="font-size: 0.72rem; color: var(--accent-primary); font-weight: bold;">0%</div>
             </div>
             <div class="logs-container" id="logs-console">
-                <div class="log-line">सिस्टम तैयार है। अल्टीमेट फेस ग्लो इंजन एक्टिव है...</div>
+                <div class="log-line">सिस्टम तैयार है। वीडियो चुनने के लिए ऊपर क्लिक करें...</div>
             </div>
         </div>
 
         <!-- Download Button -->
-        <a href="#" class="download-link-btn" id="download-btn" download="viziag_stunning_8k_master.webm">⬇️ DOWNLOAD STUNNING 8K MASTERPIECE (100% READY)</a>
+        <a href="#" class="download-link-btn" id="download-btn" download="viziag_fair_radiant_master.webm">⬇️ DOWNLOAD BEAUTIFIED & FAIR MASTER VIDEO</a>
     </div>
 
     <script>
@@ -167,44 +137,39 @@
         const logsConsole = document.getElementById('logs-console');
         const progressIndicator = document.getElementById('progress-indicator');
         const downloadBtn = document.getElementById('download-btn');
-        const aiPromptInput = document.getElementById('ai-prompt-input');
-        const beautySlider = document.getElementById('beauty-slider');
-        const beautyValText = document.getElementById('beauty-val-text');
 
-        function updateBeautyValue(val) {
-            beautyValText.innerText = val + '%';
+        const sliderFair = document.getElementById('slider-fair');
+        const sliderGlow = document.getElementById('slider-glow');
+        const sliderBright = document.getElementById('slider-bright');
+
+        function updateVals() {
+            document.getElementById('val-fair').innerText = sliderFair.value + '%';
+            document.getElementById('val-glow').innerText = sliderGlow.value + '%';
+            document.getElementById('val-bright').innerText = sliderBright.value + '%';
         }
 
-        function addLog(text, type = 'normal') {
+        function addLog(text) {
             logsSection.style.display = 'block';
             const div = document.createElement('div');
-            div.className = 'log-line ' + (type === 'error' ? 'log-error' : type === 'success' ? 'log-success' : '');
+            div.className = 'log-line';
             div.innerText = `[${new Date().toLocaleTimeString()}] ${text}`;
             logsConsole.appendChild(div);
             logsConsole.scrollTop = logsConsole.scrollHeight;
         }
 
-        window.onload = () => {
-            const savedKey = localStorage.getItem('viziag_api_key');
-            if (savedKey) document.getElementById('modal-api-key').value = savedKey;
-        };
-
-        function toggleSettingsModal(show) {
-            document.getElementById('settings-modal').style.display = show ? 'flex' : 'none';
-        }
-
-        function saveSettingsAndClose() {
-            const apiKey = document.getElementById('modal-api-key').value.trim();
-            if (!apiKey) { alert("⚠️ कृपया API Key दर्ज करें!"); return; }
-            localStorage.setItem('viziag_api_key', apiKey);
-            toggleSettingsModal(false);
-            addLog("API Key सुरक्षित रूप से सेव हो गई है।", "success");
+        function copyFullCode() {
+            const htmlContent = document.documentElement.outerHTML;
+            navigator.clipboard.writeText(htmlContent).then(() => {
+                alert("✅ पूरा कोड सफलतापूर्वक कॉपी हो गया है!");
+            }).catch(err => {
+                alert("❌ कॉपी करने में असफल: " + err);
+            });
         }
 
         fileInput.onchange = (e) => {
             const file = e.target.files[0];
             if (file) {
-                addLog(`फाइल लोड हो रही है: ${file.name}`);
+                addLog(`फाइल लोड की जा रही है: ${file.name}`);
                 const tempVideo = document.createElement('video');
                 tempVideo.src = URL.createObjectURL(file);
                 tempVideo.onloadedmetadata = () => {
@@ -218,12 +183,10 @@
                         uploadTrigger.style.display = 'none';
                         videoWrapper.style.display = 'block';
                         
-                        addLog(`वीडियो फ्रेम मैपिंग सफल: ${canvas.width}x${canvas.height}`, "success");
+                        addLog(`वीडियो फ्रेम साइज सेट हो गया: ${canvas.width}x${canvas.height}`);
                         renderLoop();
                     };
                 };
-            } else {
-                addLog("एरर: फाइल लोड नहीं हो पाई!", "error");
             }
         };
 
@@ -231,25 +194,26 @@
             if (sourceVideo.readyState >= 2) {
                 ctx.save();
                 
-                // --- अल्टीमेट 8K सिनेमैटिक और फेस ग्लो इंजन ---
-                let bVal = beautySlider.value / 100;
-                let brightnessVal = 100 + (bVal * 15);
-                let contrastVal = 100 + (bVal * 12);
-                let saturateVal = 100 + (bVal * 30);
-                
-                // प्राइमरी कलर करेक्शन और शार्पनेस
-                ctx.filter = `brightness(${brightnessVal}%) contrast(${contrastVal}%) saturate(${saturateVal}%)`;
+                let fVal = sliderFair.value / 100;
+                let gVal = sliderGlow.value / 100;
+                let bVal = sliderBright.value / 100;
+
+                let brightness = 100 + (fVal * 22) + (bVal * 10);
+                let contrast = 100 + (fVal * 12);
+                let saturate = 100 + (gVal * 15) - (fVal * 5);
+
+                ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%)`;
                 ctx.drawImage(sourceVideo, 0, 0, canvas.width, canvas.height);
                 
-                // लेयर 1: चेहरे को गोरा और ग्लोइंग बनाने के लिए वार्म सॉफ्ट लाइट ब्लेंड
-                if (bVal > 0) {
+                if (fVal > 0) {
                     ctx.globalCompositeOperation = 'screen';
-                    ctx.fillStyle = `rgba(255, 230, 215, ${bVal * 0.10})`;
+                    ctx.fillStyle = `rgba(255, 240, 230, ${fVal * 0.12})`;
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    
-                    // लेयर 2: हॉलीवुड मूवी जैसी रिच विजुअल डेप्थ के लिए ओवरले
-                    ctx.globalCompositeOperation = 'overlay';
-                    ctx.fillStyle = `rgba(56, 189, 248, ${bVal * 0.05})`;
+                }
+
+                if (gVal > 0) {
+                    ctx.globalCompositeOperation = 'soft-light';
+                    ctx.fillStyle = `rgba(255, 220, 200, ${gVal * 0.15})`;
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                 }
                 
@@ -258,30 +222,25 @@
             requestAnimationFrame(renderLoop);
         }
 
-        function executeAutonomousPrompt() {
-            const promptText = aiPromptInput.value.trim();
-            if (!promptText) {
-                alert("⚠️ कृपया पहले प्रॉम्प्ट दर्ज करें!");
+        function startProcessing() {
+            if (!sourceVideo.src) {
+                alert("⚠️ कृपया पहले कोई वीडियो अपलोड करें!");
                 return;
             }
 
-            if (sourceVideo.paused && sourceVideo.src) {
-                sourceVideo.currentTime = 0;
-                sourceVideo.play();
-            }
+            sourceVideo.currentTime = 0;
+            sourceVideo.play();
 
-            addLog(`अल्टीमेट ब्यूटी प्रॉम्प्ट निष्पादित: "${promptText}"`, "success");
-            
             recordedChunks = [];
             const stream = canvas.captureStream ? canvas.captureStream(60) : null;
             if (!stream) {
-                addLog("एरर: कैनवास स्ट्रीम कैप्चर विफल!", "error");
+                addLog("एरर: स्ट्रीम कैप्चर नहीं हो पाई!");
                 return;
             }
 
             try {
                 mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9', videoBitsPerSecond: 15000000 });
-                addLog("मीडिया रिकॉर्डर VP9 हाई-क्वालिटी कोडेक पर सक्रिय।");
+                addLog("हाई-क्वालिटी VP9 कोडेक के साथ रिकॉर्डिंग शुरू।");
             } catch (e) {
                 mediaRecorder = new MediaRecorder(stream);
                 addLog("डिफ़ॉल्ट कोडेक पर रिकॉर्डिंग शुरू।");
@@ -294,25 +253,21 @@
                 downloadBtn.href = URL.createObjectURL(blob);
                 downloadBtn.style.display = 'block';
                 progressIndicator.innerText = "100%";
-                addLog("100% - शानदार 8K मास्टरपीस वीडियो पूरी तरह तैयार है! नीचे डाउनलोड बटन हाजिर है।", "success");
+                addLog("100% - गोरा, सुंदर और ग्लोइंग वीडियो पूरी तरह तैयार है!");
             };
 
             mediaRecorder.start();
-            addLog("फेस ग्लोइंग और 8K सिनेमैटिक रेंडरिंग चालू (0%)...");
+            addLog("फेस ब्राइटनिंग और स्किन फेयरनेस रेंडरिंग चालू है...");
 
-            let renderPercent = 0;
+            let progress = 0;
             if (renderTimer) clearInterval(renderTimer);
             
             renderTimer = setInterval(() => {
-                renderPercent += 4; 
-                let currentPercentInt = Math.min(Math.floor(renderPercent), 100);
-                progressIndicator.innerText = currentPercentInt + "%";
+                progress += 4;
+                let current = Math.min(progress, 100);
+                progressIndicator.innerText = current + "%";
                 
-                if (currentPercentInt % 25 === 0) {
-                    addLog(`प्रगति: ${currentPercentInt}% पूरी हो चुकी है...`);
-                }
-                
-                if (currentPercentInt >= 100) {
+                if (current >= 100) {
                     clearInterval(renderTimer);
                     if (mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop();
                     if (!sourceVideo.paused) sourceVideo.pause();
