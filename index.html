@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Pro Cinematic Studio</title>
+    <title>Ultimate Smooth Cinematic Studio</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #05070b; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
@@ -14,10 +14,12 @@
         .upload-box:hover { border-color: #38bdf8; }
         
         .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 10px; overflow: hidden; margin-bottom: 20px; display: none; box-shadow: 0 8px 20px rgba(0,0,0,0.8); }
-        video, canvas { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
         
-        /* Dynamic Letterbox Bars */
-        .letterbox-top, .letterbox-bottom { position: absolute; left: 0; width: 100%; background: #000; z-index: 10; pointer-events: none; transition: height 0.1s; }
+        /* Video element with hardware-accelerated filters for zero lag & zero pixelation */
+        video { width: 100%; height: 100%; object-type: contain; position: absolute; top: 0; left: 0; object-fit: contain; }
+        
+        /* Dynamic Cinematic Letterbox Bars */
+        .letterbox-top, .letterbox-bottom { position: absolute; left: 0; width: 100%; background: #000; z-index: 10; pointer-events: none; transition: height 0.05s; }
         .letterbox-top { top: 0; height: 0%; }
         .letterbox-bottom { bottom: 0; height: 0%; }
 
@@ -39,59 +41,58 @@
 <body>
 
     <div class="container">
-        <h1>🎬 Ultimate Cinematic Studio</h1>
+        <h1>🎬 Smooth HD Cinematic Studio</h1>
 
         <div class="upload-box" id="upload-trigger" onclick="document.getElementById('file-input').click()">
             <div style="font-size: 2rem; margin-bottom: 8px;">📁</div>
-            <div style="color: #94a3b8; font-size: 0.95rem;">वीडियो फाइल चुनें</div>
+            <div style="color: #94a3b8; font-size: 0.95rem;">एचडी वीडियो फाइल चुनें</div>
             <input type="file" id="file-input" accept="video/*" style="display: none;">
         </div>
 
         <div class="video-wrapper" id="video-wrapper">
             <div class="letterbox-top" id="lb-top"></div>
             <video id="source-video" crossorigin="anonymous" playsinline></video>
-            <canvas id="output-canvas"></canvas>
             <div class="letterbox-bottom" id="lb-bottom"></div>
         </div>
 
         <div class="controls-panel" id="manual-controls">
-            <div style="font-size: 0.85rem; color: #38bdf8; margin-bottom: 12px; font-weight: bold; text-transform: uppercase;">🎛️ प्रो कलर ग्रेडिंग टूल्स (0% से 200%):</div>
+            <div style="font-size: 0.85rem; color: #38bdf8; margin-bottom: 12px; font-weight: bold; text-transform: uppercase;">🎛️ स्मूथ प्रो कलर ग्रेडिंग टूल्स:</div>
             
             <div class="control-group">
-                <label><span>Exposure (लाइट / एक्सपोजर)</span><span id="val-exposure">100%</span></label>
-                <input type="range" id="range-exposure" min="0" max="200" value="100" step="1" oninput="updateValues()">
+                <label><span>Brightness (ब्राइटनेस / एक्सपोजर)</span><span id="val-brightness">100%</span></label>
+                <input type="range" id="range-brightness" min="0" max="200" value="100" step="1" oninput="updateFilters()">
             </div>
 
             <div class="control-group">
-                <label><span>Contrast (कंट्रास्ट / डीपनेस)</span><span id="val-contrast">100%</span></label>
-                <input type="range" id="range-contrast" min="0" max="200" value="100" step="1" oninput="updateValues()">
+                <label><span>Contrast (कंट्रास्ट / गहराई)</span><span id="val-contrast">100%</span></label>
+                <input type="range" id="range-contrast" min="0" max="200" value="100" step="1" oninput="updateFilters()">
             </div>
 
             <div class="control-group">
-                <label><span>Saturation (रंग चटकपन)</span><span id="val-saturation">100%</span></label>
-                <input type="range" id="range-saturation" min="0" max="200" value="100" step="1" oninput="updateValues()">
+                <label><span>Saturation (रंगों का चटकपन)</span><span id="val-saturation">100%</span></label>
+                <input type="range" id="range-saturation" min="0" max="200" value="100" step="1" oninput="updateFilters()">
             </div>
 
             <div class="control-group">
-                <label><span>Temperature (वार्म / कूल टोन)</span><span id="val-temp">0</span></label>
-                <input type="range" id="range-temp" min="-50" max="50" value="0" step="1" oninput="updateValues()">
+                <label><span>Sepia / Film Tone (सिनेमैटिक वार्मथ)</span><span id="val-sepia">0%</span></label>
+                <input type="range" id="range-sepia" min="0" max="100" value="0" step="1" oninput="updateFilters()">
             </div>
 
             <div class="control-group">
-                <label><span>Cinematic Letterbox (सिनेमैटिक पट्टी)</span><span id="val-letterbox">10%</span></label>
-                <input type="range" id="range-letterbox" min="0" max="25" value="10" step="1" oninput="updateValues()">
+                <label><span>Cinematic Letterbox (काली पट्टियाँ)</span><span id="val-letterbox">10%</span></label>
+                <input type="range" id="range-letterbox" min="0" max="25" value="10" step="1" oninput="updateFilters()">
             </div>
         </div>
 
         <div id="controls-section" style="display: none;">
             <div class="btn-group">
                 <button class="action-btn" onclick="togglePlay()">▶ Play / Pause</button>
-                <button class="action-btn render-btn" id="record-btn" onclick="startRecordingExport()">🔴 Record & Export HD</button>
+                <button class="action-btn render-btn" id="record-btn" onclick="startSmoothRecording()">🔴 Record Smooth HD</button>
             </div>
 
-            <div class="status-box" id="status-text">कंट्रोल सेट करें और वीडियो रिकॉर्ड करें।</div>
+            <div class="status-box" id="status-text">क्वालिटी सेट करें और रिकॉर्ड बटन दबाएं।</div>
 
-            <a href="#" class="download-link-btn" id="download-btn" download="master_cinematic.webm">⬇️ Download Cinematic Video</a>
+            <a href="#" class="download-link-btn" id="download-btn" download="smooth_hd_cinematic.webm">⬇️ Download Clean HD Video</a>
         </div>
     </div>
 
@@ -104,8 +105,6 @@
         const uploadTrigger = document.getElementById('upload-trigger');
         const videoWrapper = document.getElementById('video-wrapper');
         const sourceVideo = document.getElementById('source-video');
-        const canvas = document.getElementById('output-canvas');
-        const ctx = canvas.getContext('2d');
         const controlsSection = document.getElementById('controls-section');
         const manualControls = document.getElementById('manual-controls');
         const statusText = document.getElementById('status-text');
@@ -115,12 +114,6 @@
         const lbTop = document.getElementById('lb-top');
         const lbBottom = document.getElementById('lb-bottom');
 
-        let exposureVal = 100;
-        let contrastVal = 100;
-        let saturationVal = 100;
-        let tempVal = 0;
-        let letterboxVal = 10;
-
         fileInput.onchange = (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -129,32 +122,33 @@
                 sourceVideo.src = url;
                 sourceVideo.load();
                 sourceVideo.onloadedmetadata = () => {
-                    canvas.width = 1280;
-                    canvas.height = 720;
                     uploadTrigger.style.display = 'none';
                     videoWrapper.style.display = 'block';
                     manualControls.style.display = 'block';
                     controlsSection.style.display = 'block';
-                    startLivePreview();
+                    updateFilters();
                 };
             }
         };
 
-        function updateValues() {
-            exposureVal = document.getElementById('range-exposure').value;
-            contrastVal = document.getElementById('range-contrast').value;
-            saturationVal = document.getElementById('range-saturation').value;
-            tempVal = document.getElementById('range-temp').value;
-            letterboxVal = document.getElementById('range-letterbox').value;
+        function updateFilters() {
+            let b = document.getElementById('range-brightness').value;
+            let c = document.getElementById('range-contrast').value;
+            let s = document.getElementById('range-saturation').value;
+            let sep = document.getElementById('range-sepia').value;
+            let lb = document.getElementById('range-letterbox').value;
 
-            document.getElementById('val-exposure').innerText = exposureVal + '%';
-            document.getElementById('val-contrast').innerText = contrastVal + '%';
-            document.getElementById('val-saturation').innerText = saturationVal + '%';
-            document.getElementById('val-temp').innerText = tempVal;
-            document.getElementById('val-letterbox').innerText = letterboxVal + '%';
+            document.getElementById('val-brightness').innerText = b + '%';
+            document.getElementById('val-contrast').innerText = c + '%';
+            document.getElementById('val-saturation').innerText = s + '%';
+            document.getElementById('val-sepia').innerText = sep + '%';
+            document.getElementById('val-letterbox').innerText = lb + '%';
 
-            lbTop.style.height = letterboxVal + '%';
-            lbBottom.style.height = letterboxVal + '%';
+            // Apply direct GPU hardware filters to prevent any pixelation or lag
+            sourceVideo.style.filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%) sepia(${sep}%)`;
+
+            lbTop.style.height = lb + '%';
+            lbBottom.style.height = lb + '%';
         }
 
         function togglePlay() {
@@ -162,67 +156,20 @@
             else sourceVideo.pause();
         }
 
-        function startLivePreview() {
-            function renderFrame() {
-                if (!sourceVideo.paused && !sourceVideo.ended) {
-                    ctx.drawImage(sourceVideo, 0, 0, canvas.width, canvas.height);
-                    applyProColorGrading();
-                }
-                requestAnimationFrame(renderFrame);
-            }
-            requestAnimationFrame(renderFrame);
-        }
-
-        function applyProColorGrading() {
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const d = imgData.data;
-            
-            let exp = exposureVal / 100;
-            let c = contrastVal / 100;
-            let s = saturationVal / 100;
-            let t = parseInt(tempVal);
-
-            for (let i = 0; i < d.length; i += 4) {
-                let r = d[i], g = d[i+1], b = d[i+2];
-
-                // 1. Exposure & Contrast
-                r = (r * exp);
-                g = (g * exp);
-                b = (b * exp);
-
-                r = c * (r - 128) + 128;
-                g = c * (g - 128) + 128;
-                b = c * (b - 128) + 128;
-
-                // 2. Temperature (Warm/Cool shift)
-                r += t;
-                b -= t;
-
-                // 3. Saturation
-                let gray = 0.2989 * r + 0.5870 * g + 0.1140 * b;
-                r = gray + s * (r - gray);
-                g = gray + s * (g - gray);
-                b = gray + s * (b - gray);
-
-                d[i]   = Math.min(255, Math.max(0, r));
-                d[i+1] = Math.min(255, Math.max(0, g));
-                d[i+2] = Math.min(255, Math.max(0, b));
-            }
-            ctx.putImageData(imgData, 0, 0);
-        }
-
-        function startRecordingExport() {
+        function startSmoothRecording() {
             if (sourceVideo.paused) {
                 sourceVideo.play();
             }
             
             recordedChunks = [];
-            const stream = canvas.captureStream(30); 
+            
+            // Capture directly from the video element stream for ultimate clarity and HD smoothness
+            const stream = sourceVideo.captureStream ? sourceVideo.captureStream() : sourceVideo.mozCaptureStream();
             
             try {
                 mediaRecorder = new MediaRecorder(stream, { 
                     mimeType: 'video/webm; codecs=vp9',
-                    videoBitsPerSecond: 3000000 
+                    videoBitsPerSecond: 5000000 // High bitrate for crystal clear HD output without pixel loss
                 });
             } catch (e) {
                 mediaRecorder = new MediaRecorder(stream); 
@@ -239,13 +186,13 @@
                 const url = URL.createObjectURL(blob);
                 downloadBtn.href = url;
                 downloadBtn.style.display = 'block';
-                statusText.innerText = "रेंडर सफल! सिनेमैटिक वीडियो डाउनलोड के लिए तैयार है।";
-                recordBtn.innerText = "🔴 Record & Export HD";
+                statusText.innerText = "रेंडर सफल! वीडियो एकदम क्लियर और स्मूथ एचडी में तैयार है।";
+                recordBtn.innerText = "🔴 Record Smooth HD";
                 recordBtn.style.background = "#10b981";
             };
 
             mediaRecorder.start();
-            statusText.innerText = "रिकॉर्डिंग जारी है... वीडियो पूरी होने तक इंतज़ार करें।";
+            statusText.innerText = "स्मूथ रिकॉर्डिंग चालू है... वीडियो खत्म होने तक इंतज़ार करें।";
             recordBtn.innerText = "⏹️ Recording... (Click to Stop)";
             recordBtn.style.background = "#ef4444";
 
