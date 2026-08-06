@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Pro Cinematic Studio 4K</title>
+    <title>AI Auto Cinematic Studio 4K</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
         body { background-color: #030712; color: #f9fafb; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 15px; }
@@ -19,16 +19,19 @@
         .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 20px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.9); border: 1px solid #1e293b; }
         video, canvas { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
         
-        /* Pro Cinematic Letterbox */
-        .letterbox-top, .letterbox-bottom { position: absolute; left: 0; width: 100%; background: #000; z-index: 10; pointer-events: none; transition: height 0.05s ease-out; }
+        .letterbox-top, .letterbox-bottom { position: absolute; left: 0; width: 100%; background: #000; z-index: 10; pointer-events: none; transition: height 0.2s ease-out; }
         .letterbox-top { top: 0; height: 0%; }
         .letterbox-bottom { bottom: 0; height: 0%; }
 
-        .controls-panel { background: #0f172a; border: 1px solid #1e293b; border-radius: 14px; padding: 16px; margin-bottom: 20px; display: none; max-height: 385px; overflow-y: auto; }
+        .auto-magic-bar { display: none; margin-bottom: 20px; }
+        .magic-btn { width: 100%; background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; border: none; padding: 14px; border-radius: 14px; font-size: 0.95rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .magic-btn:hover { transform: translateY(-2px); opacity: 0.95; }
+
+        .controls-panel { background: #0f172a; border: 1px solid #1e293b; border-radius: 14px; padding: 16px; margin-bottom: 20px; display: none; max-height: 350px; overflow-y: auto; }
         .controls-panel::-webkit-scrollbar { width: 5px; }
         .controls-panel::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
 
-        .section-title { font-size: 0.78rem; color: #38bdf8; margin-bottom: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
+        .section-title { font-size: 0.78rem; color: #38bdf8; margin-bottom: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
         
         .control-group { margin-bottom: 14px; }
         .control-group label { display: flex; justify-content: space-between; font-size: 0.82rem; color: #94a3b8; margin-bottom: 5px; font-weight: 600; }
@@ -44,23 +47,20 @@
         .render-btn { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
         
         .status-box { font-size: 0.82rem; color: #94a3b8; text-align: center; margin-top: 8px; font-weight: 500; }
-        .download-link-btn { display: none; width: 100%; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; text-decoration: none; padding: 14px; border-radius: 12px; font-weight: 700; text-align: center; margin-top: 12px; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); animation: pulse 2s infinite; }
-        
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.01); } 100% { transform: scale(1); } }
+        .download-link-btn { display: none; width: 100%; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; text-decoration: none; padding: 14px; border-radius: 12px; font-weight: 700; text-align: center; margin-top: 12px; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="header">
-            <h1>🎬 ELITE CINEMATIC 4K</h1>
-            <div class="badge">PRO STUDIO</div>
+            <h1>🎬 AI AUTO CINEMATIC 4K</h1>
+            <div class="badge">PRO AI</div>
         </div>
 
         <div class="upload-box" id="upload-trigger" onclick="document.getElementById('file-input').click()">
             <div style="font-size: 2.2rem; margin-bottom: 8px;">🎞️</div>
-            <div style="color: #cbd5e1; font-weight: 600; font-size: 0.95rem;">अपनी HD / 4K वीडियो यहाँ अपलोड करें</div>
-            <div style="color: #64748b; font-size: 0.78rem; margin-top: 4px;">मक्खन जैसी स्मूथ प्रोसेसिंग और क्रिस्टल क्लियर क्लैरिटी</div>
+            <div style="color: #cbd5e1; font-weight: 600; font-size: 0.95rem;">वीडियो अपलोड करें (ऑटो-मैजिक के लिए)</div>
             <input type="file" id="file-input" accept="video/*" style="display: none;">
         </div>
 
@@ -71,49 +71,48 @@
             <div class="letterbox-bottom" id="lb-bottom"></div>
         </div>
 
+        <div class="auto-magic-bar" id="auto-magic-bar">
+            <button class="magic-btn" onclick="applyAutoCinematicMagic()">✨ Auto Cinematic Magic (एक क्लिक में सब सेट)</button>
+        </div>
+
         <div class="controls-panel" id="manual-controls">
-            <div class="section-title">🎛️ Hollywood Grade Color Grading (0% - 200%)</div>
+            <div class="section-title">🎛️ Manual Fine-Tuning Controls</div>
             
             <div class="control-group">
-                <label><span>⚡ Exposure (लाइट ब्राइटनेस)</span><span id="val-exposure">100%</span></label>
-                <input type="range" id="range-exposure" min="0" max="200" value="100" step="1" oninput="applyMasterFilters()">
+                <label><span>⚡ Exposure</span><span id="val-exposure">100%</span></label>
+                <input type="range" id="range-exposure" min="0" max="200" value="100" step="1" oninput="updateValues()">
             </div>
 
             <div class="control-group">
-                <label><span>🌓 Contrast (गहराई और डेप्थ)</span><span id="val-contrast">100%</span></label>
-                <input type="range" id="range-contrast" min="0" max="200" value="100" step="1" oninput="applyMasterFilters()">
+                <label><span>🌓 Contrast</span><span id="val-contrast">100%</span></label>
+                <input type="range" id="range-contrast" min="0" max="200" value="100" step="1" oninput="updateValues()">
             </div>
 
             <div class="control-group">
-                <label><span>🎨 Saturation (रंगों का चटकपन)</span><span id="val-saturation">100%</span></label>
-                <input type="range" id="range-saturation" min="0" max="200" value="100" step="1" oninput="applyMasterFilters()">
+                <label><span>🎨 Saturation</span><span id="val-saturation">100%</span></label>
+                <input type="range" id="range-saturation" min="0" max="200" value="100" step="1" oninput="updateValues()">
             </div>
 
             <div class="control-group">
-                <label><span>✨ Sharpen / Clarity (एचडी शार्पनेस)</span><span id="val-sharpen">0%</span></label>
-                <input type="range" id="range-sharpen" min="0" max="100" value="0" step="1" oninput="applyMasterFilters()">
+                <label><span>🌡️ Temperature</span><span id="val-temp">0</span></label>
+                <input type="range" id="range-temp" min="-50" max="50" value="0" step="1" oninput="updateValues()">
             </div>
 
             <div class="control-group">
-                <label><span>🌡️ Temperature (वार्म / कूल टोन)</span><span id="val-temp">0</span></label>
-                <input type="range" id="range-temp" min="-50" max="50" value="0" step="1" oninput="applyMasterFilters()">
-            </div>
-
-            <div class="control-group">
-                <label><span>🎞️ Cinematic Letterbox (मूवी पट्टियाँ)</span><span id="val-letterbox">10%</span></label>
-                <input type="range" id="range-letterbox" min="0" max="25" value="10" step="1" oninput="applyMasterFilters()">
+                <label><span>🎞️ Cinematic Letterbox</span><span id="val-letterbox">10%</span></label>
+                <input type="range" id="range-letterbox" min="0" max="25" value="10" step="1" oninput="updateValues()">
             </div>
         </div>
 
         <div id="controls-section" style="display: none;">
             <div class="btn-group">
                 <button class="action-btn" onclick="togglePlay()">▶ Play / Pause</button>
-                <button class="action-btn render-btn" id="record-btn" onclick="startProExport()">🔴 Export Pro HD Video</button>
+                <button class="action-btn render-btn" id="record-btn" onclick="startProExport()">🔴 Export 4K HD Video</button>
             </div>
 
-            <div class="status-box" id="status-text">कंट्रोल सेट करें और एचडी आउटपुट डाउनलोड करें।</div>
+            <div class="status-box" id="status-text">वीडियो तैयार है। 'Auto Cinematic Magic' बटन दबाएं या मैन्युअल सेट करें।</div>
 
-            <a href="#" class="download-link-btn" id="download-btn" download="pro_cinematic_master.webm">⬇️ Download Master HD Video</a>
+            <a href="#" class="download-link-btn" id="download-btn" download="auto_cinematic_master.webm">⬇️ Download Master Video</a>
         </div>
     </div>
 
@@ -121,7 +120,6 @@
         let selectedFile = null;
         let mediaRecorder;
         let recordedChunks = [];
-        let animationFrameId = null;
 
         const fileInput = document.getElementById('file-input');
         const uploadTrigger = document.getElementById('upload-trigger');
@@ -132,6 +130,7 @@
         
         const controlsSection = document.getElementById('controls-section');
         const manualControls = document.getElementById('manual-controls');
+        const autoMagicBar = document.getElementById('auto-magic-bar');
         const statusText = document.getElementById('status-text');
         const downloadBtn = document.getElementById('download-btn');
         const recordBtn = document.getElementById('record-btn');
@@ -139,7 +138,7 @@
         const lbTop = document.getElementById('lb-top');
         const lbBottom = document.getElementById('lb-bottom');
 
-        let expVal = 100, conVal = 100, satVal = 100, sharpVal = 0, tempVal = 0, lbVal = 10;
+        let expVal = 100, conVal = 100, satVal = 100, tempVal = 0, lbVal = 10;
 
         fileInput.onchange = (e) => {
             const file = e.target.files[0];
@@ -149,33 +148,51 @@
                 sourceVideo.src = url;
                 sourceVideo.load();
                 sourceVideo.onloadedmetadata = () => {
-                    // Native High Resolution Scaling for crisp 4K/HD clarity
                     canvas.width = sourceVideo.videoWidth || 1920;
                     canvas.height = sourceVideo.videoHeight || 1080;
                     
                     uploadTrigger.style.display = 'none';
                     videoWrapper.style.display = 'block';
+                    autoMagicBar.style.display = 'block';
                     manualControls.style.display = 'block';
                     controlsSection.style.display = 'block';
                     
-                    applyMasterFilters();
+                    updateValues();
                     renderLoop();
                 };
             }
         };
 
-        function applyMasterFilters() {
+        // 🌟 ONE-CLICK AUTO CINEMATIC MAGIC FUNCTION
+        function applyAutoCinematicMagic() {
+            // Perfect professional preset values for instant blockbuster look
+            expVal = 112;    // Slight bright boost
+            conVal = 125;    // Rich deep contrast
+            satVal = 135;    // Pop colors
+            tempVal = 12;    // Warm Hollywood golden tone
+            lbVal = 12;      // Clean 12% cinematic letterbox bars
+
+            // Update sliders UI automatically
+            document.getElementById('range-exposure').value = expVal;
+            document.getElementById('range-contrast').value = conVal;
+            document.getElementById('range-saturation').value = satVal;
+            document.getElementById('range-temp').value = tempVal;
+            document.getElementById('range-letterbox').value = lbVal;
+
+            updateValues();
+            statusText.innerText = "✨ ऑटो सिनेमैटिक मैजिक सफलतापूर्वक अप्लाई हो गया है!";
+        }
+
+        function updateValues() {
             expVal = document.getElementById('range-exposure').value;
             conVal = document.getElementById('range-contrast').value;
             satVal = document.getElementById('range-saturation').value;
-            sharpVal = document.getElementById('range-sharpen').value;
             tempVal = document.getElementById('range-temp').value;
             lbVal = document.getElementById('range-letterbox').value;
 
             document.getElementById('val-exposure').innerText = expVal + '%';
             document.getElementById('val-contrast').innerText = conVal + '%';
             document.getElementById('val-saturation').innerText = satVal + '%';
-            document.getElementById('val-sharpen').innerText = sharpVal + '%';
             document.getElementById('val-temp').innerText = tempVal;
             document.getElementById('val-letterbox').innerText = lbVal + '%';
 
@@ -184,79 +201,55 @@
         }
 
         function togglePlay() {
-            if (sourceVideo.paused) {
-                sourceVideo.play();
-            } else {
-                sourceVideo.pause();
-            }
+            if (sourceVideo.paused) sourceVideo.play();
+            else sourceVideo.pause();
         }
 
         function renderLoop() {
             if (sourceVideo.readyState >= 2) {
                 ctx.save();
-                
-                // Advanced GPU Filter Chain for ultra-high professional output quality without pixelation
-                let sepiaVal = tempVal > 0 ? tempVal * 0.5 : 0;
+                let sepiaVal = tempVal > 0 ? tempVal * 0.6 : 0;
                 let hueRotate = tempVal < 0 ? tempVal * 1.5 : 0;
                 ctx.filter = `brightness(${expVal}%) contrast(${conVal}%) saturate(${satVal}%) sepia(${sepiaVal}%) hue-rotate(${hueRotate}deg)`;
-                
                 ctx.drawImage(sourceVideo, 0, 0, canvas.width, canvas.height);
                 ctx.restore();
             }
-            animationFrameId = requestAnimationFrame(renderLoop);
+            requestAnimationFrame(renderLoop);
         }
 
         function startProExport() {
-            if (sourceVideo.paused) {
-                sourceVideo.play();
-            }
+            if (sourceVideo.paused) sourceVideo.play();
             
             recordedChunks = [];
-            // Ultra-smooth 60 FPS Canvas Capture Stream
             const stream = canvas.captureStream(60); 
             
             try {
                 mediaRecorder = new MediaRecorder(stream, { 
                     mimeType: 'video/webm; codecs=vp9',
-                    videoBitsPerSecond: 15000000 // 15 Mbps Maximum Bitrate for zero quality loss and absolute crisp 4K look
+                    videoBitsPerSecond: 15000000 
                 });
             } catch (e) {
                 mediaRecorder = new MediaRecorder(stream); 
             }
 
-            mediaRecorder.ondataavailable = function(event) {
-                if (event.data.size > 0) {
-                    recordedChunks.push(event.data);
-                }
-            };
+            mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
 
-            mediaRecorder.onstop = function() {
+            mediaRecorder.onstop = () => {
                 const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                const url = URL.createObjectURL(blob);
-                downloadBtn.href = url;
+                downloadBtn.href = URL.createObjectURL(blob);
                 downloadBtn.style.display = 'block';
-                statusText.innerText = "शानदार! एचडी मास्टर वीडियो सफलता पूर्वक तैयार हो गया है।";
-                recordBtn.innerText = "🔴 Export Pro HD Video";
+                statusText.innerText = "रेंडर सफल! ऑटो-सिनेमैटिक वीडियो डाउनलोड के लिए तैयार है।";
+                recordBtn.innerText = "🔴 Export 4K HD Video";
                 recordBtn.style.background = "linear-gradient(135deg, #10b981, #059669)";
             };
 
             mediaRecorder.start();
-            statusText.innerText = "प्रोसेिंग जारी है... वीडियो खत्म होने तक इंतज़ार करें।";
+            statusText.innerText = "मैजिक रेंडरिंग जारी है... वीडियो खत्म होने तक इंतज़ार करें।";
             recordBtn.innerText = "⏹️ Rendering... (Click to Stop)";
             recordBtn.style.background = "linear-gradient(135deg, #ef4444, #dc2626)";
 
-            sourceVideo.onended = () => {
-                if (mediaRecorder && mediaRecorder.state === "recording") {
-                    mediaRecorder.stop();
-                }
-            };
-
-            recordBtn.onclick = () => {
-                if (mediaRecorder && mediaRecorder.state === "recording") {
-                    mediaRecorder.stop();
-                    sourceVideo.pause();
-                }
-            };
+            sourceVideo.onended = () => { if (mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop(); };
+            recordBtn.onclick = () => { if (mediaRecorder && mediaRecorder.state === "recording") { mediaRecorder.stop(); sourceVideo.pause(); } };
         }
     </script>
 </body>
