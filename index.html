@@ -1,9 +1,9 @@
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viziag Real AI Engine - Final</title>
+    <title>Viziag Real AI Engine</title>
     <style>
         :root {
             --bg-base: #050b14;
@@ -15,35 +15,22 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
         body { background-color: var(--bg-base); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 16px; }
-
         .container { width: 100%; max-width: 420px; background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid var(--border-color); }
-        
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h1 { font-size: 1.2rem; font-weight: 900; background: linear-gradient(135deg, #38bdf8, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h1 { font-size: 1.1rem; font-weight: 900; background: linear-gradient(135deg, #38bdf8, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .settings-btn { background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; }
-        .settings-btn:hover { background: var(--border-color); }
-
         .file-upload-wrapper { background: #020617; border: 2px dashed var(--border-color); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; margin-bottom: 15px; }
-        .file-upload-wrapper:hover { border-color: var(--accent-primary); }
         #file-name { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; word-break: break-all; }
-
-        textarea { width: 100%; height: 100px; background: #020617; color: white; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 15px; outline: none; font-size: 0.9rem; resize: none; }
-        textarea:focus { border-color: var(--accent-primary); }
-
-        button.generate-btn { width: 100%; background: var(--accent-primary); color: #050b14; border: none; padding: 14px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; transition: opacity 0.2s; }
-        button.generate-btn:hover { opacity: 0.9; }
+        textarea { width: 100%; height: 90px; background: #020617; color: white; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 15px; outline: none; font-size: 0.85rem; resize: none; }
+        button.generate-btn { width: 100%; background: var(--accent-primary); color: #050b14; border: none; padding: 14px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 0.95rem; text-transform: uppercase; }
         button.generate-btn:disabled { background: #64748b; cursor: not-allowed; }
-
-        #status { margin-top: 15px; font-size: 0.8rem; color: var(--accent-primary); text-align: center; min-height: 1.2rem; }
+        #status { margin-top: 15px; font-size: 0.8rem; color: var(--accent-primary); text-align: center; line-height: 1.4; }
         #resultVideo { width: 100%; border-radius: 10px; margin-top: 15px; display: none; border: 1px solid var(--border-color); }
-
-        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; padding: 16px; }
         .modal-content { background: var(--bg-card); border: 1px solid var(--border-color); width: 100%; max-width: 400px; border-radius: 16px; padding: 20px; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: var(--accent-primary); font-weight: 800; }
-        .close-modal { cursor: pointer; font-size: 1.2rem; }
         .input-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; display: block; font-weight: 600; }
-        .api-input { width: 100%; background: #020617; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; color: white; font-size: 0.85px; margin-bottom: 12px; outline: none; }
+        .api-input { width: 100%; background: #020617; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; color: white; font-size: 0.85rem; margin-bottom: 12px; outline: none; }
         .save-btn { width: 100%; background: var(--accent-primary); color: #050b14; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; }
     </style>
 </head>
@@ -57,111 +44,146 @@
 
     <div class="file-upload-wrapper" onclick="document.getElementById('file-input').click()">
         <div style="font-size: 1.5rem; color: var(--text-muted);">📄</div>
-        <div style="font-size: 0.9rem; font-weight: 600; margin-top: 5px;">फोटो/वीडियो चुनें</div>
-        <input type="file" id="file-input" accept="image/*,video/*" style="display: none;">
+        <div style="font-size: 0.9rem; font-weight: 600; margin-top: 5px;">फोटो चुनें (Image-to-Video)</div>
+        <input type="file" id="file-input" accept="image/*" style="display: none;">
         <div id="file-name">कोई फाइल नहीं चुनी गई</div>
     </div>
 
-    <textarea id="prompt" placeholder="यहाँ प्रॉम्प्ट लिखें... (उदा: Cinematic high-fantasy avatar, 8K, magical glow)">Cinematic transformation into a high-fantasy glowing avatar character, ethereal magical highlights, striking vibrant eyes, bio-luminescent skin, ultra-sharp facial details, 8K resolution, smooth motion.</textarea>
+    <textarea id="prompt">Cinematic transformation into a high-fantasy glowing avatar character, ethereal magical highlights, striking vibrant eyes, bio-luminescent skin, ultra-sharp facial details, 8K resolution, smooth motion.</textarea>
     
-    <button id="gen-btn" class="generate-btn" onclick="startRealEngine()">Generate Avatar Video</button>
+    <button id="gen-btn" class="generate-btn" onclick="callRealKlingAPI()">Generate Avatar Video</button>
 
     <div id="status"></div>
-    <video id="resultVideo" controls></video>
+    <video id="resultVideo" controls autoplay></video>
 </div>
 
-<!-- Settings Modal with TWO Separate Inputs -->
+<!-- Settings Modal -->
 <div class="modal" id="settings-modal">
     <div class="modal-content">
         <div class="modal-header">
             <span>⚙️ API Configuration</span>
-            <span class="close-modal" onclick="toggleSettings(false)">✕</span>
+            <span style="cursor:pointer;" onclick="toggleSettings(false)">✕</span>
         </div>
-
         <label class="input-label">🔑 Kling AI API Key:</label>
-        <input type="password" id="kling-key" class="api-input" placeholder="sk-kling-xxxxxxxxxxxxxxxx">
-
-        <label class="input-label">🔑 Grok (X.ai) API Key:</label>
-        <input type="password" id="grok-key" class="api-input" placeholder="xai-xxxxxxxxxxxxxxxx">
-
-        <button class="save-btn" onclick="saveApiKeys()">💾 Save Keys</button>
+        <input type="password" id="kling-key" class="api-input" placeholder="sk-kling-xxxxxxxx">
+        <label class="input-label">🔑 Grok (GSK) API Key:</label>
+        <input type="password" id="grok-key" class="api-input" placeholder="gsk_xxxxxxxx">
+        <button class="save-btn" onclick="saveKeys()">💾 Save Keys</button>
     </div>
 </div>
 
 <script>
-    let uploadedFile = null;
+    let selectedImageBase64 = null;
 
-    // --- Modal Functions ---
     function toggleSettings(show) {
         document.getElementById('settings-modal').style.display = show ? 'flex' : 'none';
     }
 
-    function saveApiKeys() {
-        const klingKey = document.getElementById('kling-key').value;
-        const grokKey = document.getElementById('grok-key').value;
-        localStorage.setItem('kling_key', klingKey);
-        localStorage.setItem('grok_key', grokKey);
-        alert("✅ दोनों API Keys सुरक्षित रूप से सेव हो गई हैं!");
+    function saveKeys() {
+        localStorage.setItem('kling_key', document.getElementById('kling-key').value);
+        localStorage.setItem('grok_key', document.getElementById('grok-key').value);
+        alert("✅ API Keys सेव हो गई हैं!");
         toggleSettings(false);
     }
 
-    // Load keys on startup
     window.onload = () => {
         if(localStorage.getItem('kling_key')) document.getElementById('kling-key').value = localStorage.getItem('kling_key');
         if(localStorage.getItem('grok_key')) document.getElementById('grok-key').value = localStorage.getItem('grok_key');
     };
 
-    // --- File Handling ---
     document.getElementById('file-input').addEventListener('change', function(e) {
-        uploadedFile = e.target.files[0];
-        if (uploadedFile) {
-            document.getElementById('file-name').innerText = `फाइल: ${uploadedFile.name}`;
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('file-name').innerText = `फाइल: ${file.name}`;
+            const reader = new FileReader();
+            reader.onload = function(uploadEvent) {
+                selectedImageBase64 = uploadEvent.target.result; // Base64 format for API
+            };
+            reader.readAsDataURL(file);
         }
     });
 
-    // --- Real API Engine (Simulation for Front-End) ---
-    async function startRealEngine() {
+    async function callRealKlingAPI() {
         const klingKey = localStorage.getItem('kling_key');
-        const grokKey = localStorage.getItem('grok_key');
-        const prompt = document.getElementById('prompt').value;
+        const promptText = document.getElementById('prompt').value;
         const status = document.getElementById('status');
         const btn = document.getElementById('gen-btn');
 
-        if (!klingKey || !grokKey) {
-            alert("⚠️ कृपया पहले ⚙️ सेटिंग में जाकर Kling और Grok दोनों API Keys दर्ज करें!");
+        if (!klingKey) {
+            alert("⚠️ कृपया ⚙️ सेटिंग में जाकर Kling API Key दर्ज करें!");
             toggleSettings(true);
             return;
         }
 
-        if (!uploadedFile) {
-            alert("⚠️ कृपया पहले कोई फोटो या वीडियो अपलोड करें!");
+        if (!selectedImageBase64) {
+            alert("⚠️ कृपया पहले फोटो अपलोड करें!");
             return;
         }
 
         btn.disabled = true;
-        status.innerText = "🔄 (1/3) Grok API के जरिए प्रॉम्प्ट प्रोसेस किया जा रहा है...";
+        status.innerText = "🔄 Kling AI सर्वर पर टास्क भेजा जा रहा है...";
 
-        // Simulate API call delay
-        setTimeout(() => {
-            status.innerText = "🔄 (2/3) Kling AI सर्वर से कनेक्ट हो रहा है... (यह असली सर्वर पर ही काम करेगा)";
+        try {
+            // असली Kling AI API Endpoint (Image-to-Video)
+            const response = await fetch('https://api.klingai.com/v1/videos/image2video', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${klingKey}`
+                },
+                body: JSON.stringify({
+                    model_name: "kling-v1",
+                    image: selectedImageBase64,
+                    prompt: promptText,
+                    mode: "pro",
+                    motion_strength: "6"
+                })
+            });
+
+            const data = await response.json();
             
-            // यहाँ असली बैकएंड इंटीग्रेशन होगा। अभी सिर्फ डेमो के लिए दिखा रहे हैं।
-            // वास्तविक दुनिया में यहाँ 'fetch' या 'axios' का उपयोग करके /backend/generate को कॉल किया जाएगा।
+            if (data.code && data.code !== 0) {
+                throw new Error(data.message || "API एरर आ गया है।");
+            }
 
-            setTimeout(() => {
-                status.innerText = "✅ (3/3) टास्क सबमिट हो गया! रेंडरिंग पूरी होने पर वीडियो लिंक यहाँ आ जाएगा।";
+            const taskId = data.data.task_id;
+            status.innerText = `⏳ टास्क बन गया (ID: ${taskId}). वीडियो रेंडर हो रही है, कृपया प्रतीक्षा करें...`;
+
+            // स्टेटस चेक करने के लिए लूप (Polling)
+            pollTaskStatus(taskId, klingKey, btn, status);
+
+        } catch (error) {
+            status.innerText = "❌ एरर: " + error.message;
+            btn.disabled = false;
+        }
+    }
+
+    async function pollTaskStatus(taskId, key, btn, status) {
+        try {
+            const res = await fetch(`https://api.klingai.com/v1/videos/image2video/${taskId}`, {
+                headers: { 'Authorization': `Bearer ${key}` }
+            });
+            const result = await res.json();
+
+            if (result.data && result.data.task_status === 'succeed') {
+                status.innerText = "✨ वीडियो सफलतापर्वक बन गई है!";
+                const videoUrl = result.data.task_result.videos[0].url;
                 
-                // DEMO: चूंकि ब्राउज़र वीडियो नहीं बना सकता, हम एक लोकल टेस्ट वीडियो दिखा रहे हैं ताकि UI काम करता दिखे।
                 const videoElement = document.getElementById('resultVideo');
+                videoElement.src = videoUrl;
                 videoElement.style.display = 'block';
-                // मान लेते हैं कि यह वीडियो फाइल सर्वर से वापस आई है (अभी के लिए डमी लिंक)
-                // videoElement.src = "YOUR_GENERATED_VIDEO_URL_FROM_BACKEND.mp4"; 
-                
                 btn.disabled = false;
-                status.innerText = "✨ रेंडरिंग सिमुलेशन पूरा हुआ।";
-            }, 3000);
-
-        }, 2000);
+            } else if (result.data && result.data.task_status === 'failed') {
+                status.innerText = "❌ वीडियो रेंडरिंग फेल हो गई!";
+                btn.disabled = false;
+            } else {
+                status.innerText = "⏳ रेंडरिंग जारी है... (सर्वर पर काम चल रहा है)";
+                setTimeout(() => pollTaskStatus(taskId, key, btn, status), 6000); // हर 6 सेकंड में चेक करेगा
+            }
+        } catch (err) {
+            status.innerText = "❌ स्टेटस चेक करने में दिक्कत: " + err.message;
+            btn.disabled = false;
+        }
     }
 </script>
 </body>
