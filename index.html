@@ -509,7 +509,7 @@
             }, 1000);
         }
 
-        // Safe & Non-Hanging Chunk-based MediaRecorder Engine
+        // Bulletproof Auto-Timeout MediaRecorder Implementation
         function startMasterRender() {
             if (!isProcessing) {
                 alert("⚠️ कृपया पहले 'Run AI' पर क्लिक करके ग्रेडिंग एक्टिव करें!");
@@ -526,20 +526,11 @@
                 mimeType = 'video/webm';
             }
 
-            let mediaRecorder;
-            try {
-                // 100ms टाइम्सलाइस जोड़ने से ब्राउज़र का बफर हैंग नहीं होगा
-                mediaRecorder = new MediaRecorder(stream, { mimeType: mimeType, videoBitsPerSecond: 5000000 });
-            } catch (err) {
-                mediaRecorder = new MediaRecorder(stream);
-            }
-
+            const mediaRecorder = new MediaRecorder(stream, { mimeType: mimeType });
             let chunks = [];
 
             mediaRecorder.ondataavailable = (e) => {
-                if (e.data && e.data.size > 0) {
-                    chunks.push(e.data);
-                }
+                if (e.data.size > 0) chunks.push(e.data);
             };
 
             mediaRecorder.onstop = () => {
@@ -559,19 +550,27 @@
 
             sourceVideo.pause();
             sourceVideo.currentTime = 0;
-            
-            // रिकॉर्डिंग शुरू करें और हर 100ms पर चंक सेव करें ताकि ओवरलोड न हो
-            mediaRecorder.start(100);
             sourceVideo.play();
-            addLog("🎥 सेफ चंक-बेस्ड स्ट्रीम रिकॉर्डिंग जारी है...");
+            mediaRecorder.start();
+            addLog("🎥 लाइव कैनवास स्ट्रीम रिकॉर्ड की जा रही है...");
 
-            sourceVideo.onended = () => {
-                if(mediaRecorder.state !== "inactive") {
-                    mediaRecorder.stop();
+            let isStopped = false;
+            const stopRecordingSafe = () => {
+                if (!isStopped) {
+                    isStopped = true;
+                    if(mediaRecorder.state !== "inactive") {
+                        mediaRecorder.stop();
+                    }
+                    sourceVideo.pause();
+                    addLog("⏹️ रिकॉर्डिंग प्रक्रिया सफलतापूर्वक संपन्न हुई।");
                 }
-                sourceVideo.pause();
-                addLog("⏹️ रिकॉर्डिंग प्रक्रिया सफलतापूर्वक संपन्न हुई।");
             };
+
+            sourceVideo.onended = stopRecordingSafe;
+
+            // सुरक्षा कवच: वीडियो की असली लंबाई (सेकंड) के हिसाब से ऑटोमैटिक स्टॉप टाइमर
+            const videoDurationMs = (sourceVideo.duration || 11) * 1000 + 1000;
+            setTimeout(stopRecordingSafe, videoDurationMs);
         }
     </script>
 </body>
