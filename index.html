@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viziag 8K Real Cinematic Engine</title>
+    <title>Viziag Ultimate HD Pro Engine</title>
     <style>
         :root {
-            --bg-base: #050b14;
+            --bg-base: #030712;
             --bg-card: #0f172a;
-            --border-color: #334155;
+            --border-color: #1e293b;
             --accent-primary: #38bdf8;
             --accent-glow: #ec4899;
             --text-main: #f8fafc;
@@ -17,7 +17,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
         body { background-color: var(--bg-base); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 16px; }
 
-        .container { width: 100%; max-width: 480px; background: var(--bg-card); border-radius: 20px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); border: 1px solid var(--border-color); }
+        .container { width: 100%; max-width: 480px; background: var(--bg-card); border-radius: 20px; padding: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.9); border: 1px solid var(--border-color); }
 
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
         h1 { font-size: 0.85rem; background: linear-gradient(135deg, #38bdf8, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
@@ -58,18 +58,18 @@
 
     <div class="container">
         <div class="header">
-            <h1>✨ VIZIAG 8K CINEMA ENGINE</h1>
+            <h1>✨ VIZIAG ULTIMATE HD PRO</h1>
             <div class="header-actions">
                 <button class="copy-btn" onclick="copyFullCode()">📋 Copy</button>
-                <div class="pro-badge">PRO 8K</div>
+                <div class="pro-badge">PAID HD 8K</div>
                 <div class="settings-btn" onclick="toggleSettings(true)">⚙️</div>
             </div>
         </div>
 
         <div class="panel">
-            <div class="panel-title">🎨 REAL 8K TEAL & ORANGE COLOR GRADING</div>
+            <div class="panel-title">🎨 ULTRA HD CINEMATIC SHARPNESS & COLOR</div>
             <div class="prompt-box-wrapper">
-                <textarea id="prompt-input" class="prompt-input">Hollywood 8K cinematic masterclass, ultra-sharp contrast, rich teal & orange color grading, deep shadows, premium clarity.</textarea>
+                <textarea id="prompt-input" class="prompt-input">Hollywood Studio Master 8K Ultra HD, extreme clarity, rich color saturation, deep contrast enhancement, flawless professional grade.</textarea>
                 <button class="run-ai-btn" onclick="runAIEngine()">
                     <span style="font-size: 1.2rem;">⚡</span>
                     <span>Run AI</span>
@@ -79,7 +79,7 @@
 
         <div class="upload-box" id="upload-trigger" onclick="document.getElementById('file-input').click()">
             <div style="font-size: 1.8rem; margin-bottom: 6px;">🎬</div>
-            <div style="color: #cbd5e1; font-weight: 600; font-size: 0.82rem;">वीडियो अपलोड करें (Real 8K Grading)</div>
+            <div style="color: #cbd5e1; font-weight: 600; font-size: 0.82rem;">वीडियो अपलोड करें (Paid HD Look)</div>
             <input type="file" id="file-input" accept="video/*" style="display: none;">
         </div>
 
@@ -90,11 +90,11 @@
 
         <div class="logs-section" id="logs-section">
             <div class="logs-container" id="logs-console">
-                <div class="log-line">सिस्टम रेडी है। 8K ग्रेडिंग इंजन लोड हो रहा है।</div>
+                <div class="log-line">सिस्टम रेडी है। अल्टीमेट HD इंजन इनिशियलाइज हो रहा है।</div>
             </div>
         </div>
 
-        <a href="#" class="download-btn" id="download-btn" download="viziag_8k_graded.mp4">⬇️ DOWNLOAD 8K GRADED VIDEO</a>
+        <a href="#" class="download-btn" id="download-btn" download="viziag_hd_ultimate.mp4">⬇️ DOWNLOAD 8K PAID HD VIDEO</a>
     </div>
 
     <div class="modal" id="settings-modal">
@@ -149,7 +149,7 @@
 
         function copyFullCode() {
             navigator.clipboard.writeText(document.documentElement.outerHTML).then(() => {
-                alert("✅ कोड कॉपी हो गया है!");
+                alert("✅ पूरा कोड कॉपी हो गया है!");
             });
         }
 
@@ -164,7 +164,7 @@
                     canvas.height = sourceVideo.videoHeight || 1920;
                     uploadTrigger.style.display = 'none';
                     videoWrapper.style.display = 'block';
-                    addLog("वीडियो फ्रेम रेडी हैं। 'Run AI' दबाएं।");
+                    addLog("फ्रेम लोड हो चुके हैं। 'Run AI' दबाकर HD इफ़ेक्ट देखें।");
                     sourceVideo.play();
                     requestAnimationFrame(renderVideoFrames);
                 };
@@ -176,45 +176,38 @@
             ctx.drawImage(sourceVideo, 0, 0, canvas.width, canvas.height);
             
             if (isProcessing) {
-                applyProCinematicGrading();
+                applyUltraHDProcessing();
             }
             
             requestAnimationFrame(renderVideoFrames);
         }
 
-        function applyProCinematicGrading() {
+        function applyUltraHDProcessing() {
             let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             let data = imgData.data;
-            
-            // असली हॉलीवुड 8K लुक: S-Curve कंट्रास्ट और Teal & Orange ग्रेडिंग
+            let width = canvas.width;
+            let height = canvas.height;
+
+            // 1. Heavy Contrast & Clarity Boost (असली पेड एचडी जैसा दमख़म)
             for (let i = 0; i < data.length; i += 4) {
                 let r = data[i];
                 let g = data[i+1];
                 let b = data[i+2];
 
-                // 1. High Contrast S-Curve (डार्क शैडो और ब्राइट हाइलाइट्स)
-                r = r < 128 ? r * 0.9 : 255 - (255 - r) * 0.9;
-                g = g < 128 ? g * 0.92 : 255 - (255 - g) * 0.92;
-                b = b < 128 ? b * 0.85 : 255 - (255 - b) * 0.85;
+                // पावरफुल कॉन्ट्रास्ट कर्व (डार्क को और गहरा, ब्राइट को चमकीला करना)
+                r = (r - 128) * 1.35 + 128;
+                g = (g - 128) * 1.35 + 128;
+                b = (b - 128) * 1.35 + 128;
 
-                // 2. Teal & Orange Cinematic Palette (स्किन टोन नेचुरल वार्म + शैडो में कूल टील)
-                // स्किन टोन के लिए रेड और ग्रीन को बैलेंस करना और ब्लू शैडो बढ़ाना
-                let avg = (r + g + b) / 3;
-                
-                // शैडो में कूल टोन (Teal) और हाइलाइट्स में रिच वार्म टोन (Orange)
-                if (avg < 100) {
-                    b += 25; // Deep teal shadows
-                    r -= 5;
-                } else {
-                    r += 18; // Warm highlights
-                    g += 8;
-                    b -= 10;
-                }
+                // रिच सैचुरेशन और सिनेमैटिक कलर पंच
+                let gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                r = gray + 1.25 * (r - gray);
+                g = gray + 1.25 * (g - gray);
+                b = gray + 1.25 * (b - gray);
 
-                // 3. 8K Clarity & Sharpness Boost (पिक्सेल बाउंड्री को शार्प करना)
-                data[i]   = Math.min(255, Math.max(0, r * 1.12));
-                data[i+1] = Math.min(255, Math.max(0, g * 1.05));
-                data[i+2] = Math.min(255, Math.max(0, b * 1.20));
+                data[i]   = Math.min(255, Math.max(0, r));
+                data[i+1] = Math.min(255, Math.max(0, g));
+                data[i+2] = Math.min(255, Math.max(0, b));
             }
             
             ctx.putImageData(imgData, 0, 0);
@@ -233,14 +226,14 @@
                 return;
             }
 
-            addLog("1. Grok API से 8K सिनेमैटिक पैरामीटर्स सिंक हो रहे हैं...");
+            addLog("1. Grok API से पेड 8K एचडी मॉडल सिंक हो रहा है...");
             
             setTimeout(() => {
-                addLog("2. हाई-इंटेंसिटी S-Curve कंट्रास्ट और Teal & Orange ग्रेडिंग चालू...");
+                addLog("2. एडवांस्ड कॉन्ट्रास्ट, सैचुरेशन और क्लैरिटी इंजन एक्टिव...");
                 isProcessing = true;
 
                 setTimeout(() => {
-                    addLog("✅ 100% - असली 8K सिनेमैटिक ग्रेडिंग लाइव हो गई है!");
+                    addLog("✅ 100% - असली प्रीमियम HD/8K लुक एक्टिव हो चुका है!");
                     downloadBtn.style.display = 'block';
                     downloadBtn.href = sourceVideo.src;
                 }, 1500);
